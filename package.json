@@ -1,21 +1,35 @@
 {
-  "name": "chipi-sdk",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "@chipi-pay/chipi-sdk",
+  "version": "1.1.0",
+  "description": "SDK para crear wallets y enviar transacciones usando el paymaster de AVNU",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
+    "build": "tsc",
+    "start": "nodemon src/create-wallet.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": [
+    "starknet",
+    "wallet",
+    "paymaster",
+    "gasless",
+    "avnu"
+  ],
+  "author": "chipi-pay",
+  "license": "MIT",
   "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@avnu/gasless-sdk": "^0.1.7",
+    "@avnu/gasless-sdk": "^0.1.6",
     "crypto-js": "^4.2.0",
     "starknet": "^6.23.1"
   }

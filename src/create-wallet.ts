@@ -29,6 +29,7 @@ export interface CreateWalletParams {
 }
 
 export const createArgentWallet = async (params: CreateWalletParams) => {
+  try {
     const provider = new RpcProvider({
       nodeUrl: params.rpcUrl,
     });
@@ -60,7 +61,7 @@ export const createArgentWallet = async (params: CreateWalletParams) => {
   
     // Initiating Account
     const account = new Account(provider, contractAddress, privateKeyAX);
-    console.log(account);
+    console.log("Account ", { ...account });
 
     const initialValue: Call[] = [
         {
@@ -70,50 +71,55 @@ export const createArgentWallet = async (params: CreateWalletParams) => {
         },
       ];
     
-      try {
-        const typeData = await fetchBuildTypedData(
-          contractAddress,
-          initialValue,
-          undefined,
-          undefined,
-          params.options,
-          accountClassHash,
-        );
+      const typeData = await fetchBuildTypedData(
+        contractAddress,
+        initialValue,
+        undefined,
+        undefined,
+        {baseUrl: BASE_URL, apiKey: params.options.apiKey},
+        accountClassHash,
+      );
     
-        const userSignature = await account.signMessage(typeData);
+      const userSignature = await account.signMessage(typeData);
     
-        const deploymentData: DeploymentData = {
-          class_hash: accountClassHash,
-          salt: starkKeyPubAX,
-          unique: `${num.toHex(0)}`,
-          calldata: AXConstructorCallData.map((value) => num.toHex(value)),
-        };
+      const deploymentData: DeploymentData = {
+        class_hash: accountClassHash,
+        salt: starkKeyPubAX,
+        unique: `${num.toHex(0)}`,
+        calldata: AXConstructorCallData.map((value) => num.toHex(value)),
+      };
     
-        const executeTransaction = await fetchExecuteTransaction(
-          contractAddress,
-          JSON.stringify(typeData),
-          userSignature,
-          params.options,
-          deploymentData,
-        );
+      const executeTransaction = await fetchExecuteTransaction(
+        contractAddress,
+        JSON.stringify(typeData),
+        userSignature,
+        params.options,
+        deploymentData,
+      );
 
-        const encryptedPrivateKey = encryptPrivateKey(privateKeyAX, params.pin);
-        console.log(encryptedPrivateKey);
+      const encryptedPrivateKey = encryptPrivateKey(privateKeyAX, params.pin);
+      console.log("Encrypted private key: ", encryptedPrivateKey);
     
-        // Now lets save the wallet in clerk public metadata
-        /* await saveWallet({
-          contractAddress: contractAddress as `0x${string}`,
-          encryptedPrivateKey: encryptPrivateKey(privateKeyAX, params.pin),
-        });
-        console.log(
-          `Wallet created successfully with txHash: ${executeTransaction.transactionHash}`,
-        ); */
+      // Now lets save the wallet in clerk public metadata
+      /* await saveWallet({
+        contractAddress: contractAddress as `0x${string}`,
+        encryptedPrivateKey: encryptPrivateKey(privateKeyAX, params.pin),
+      });
+      console.log(
+        `Wallet created successfully with txHash: ${executeTransaction.transactionHash}`,
+      ); */
     
-        // TODO: Guardar la wallet en dashboard
-
-        return { success: true, txHash: executeTransaction.transactionHash };
-      } catch (error: unknown) {
-        console.error("Error creating Argent wallet", error);
-        throw new Error("Error creating Argent wallet");
-      }
+      // TODO: Guardar la wallet en dashboard
+      console.log("Wallet created successfully with txHash: ", executeTransaction.transactionHash);
+      console.log("Account address: ", contractAddress);
+      return { success: true, accountAddress: contractAddress, encryptedPrivateKey, txHash: executeTransaction.transactionHash };
+  } catch (error: unknown) {
+    console.error("Error detallado:", error);
+    
+    if (error instanceof Error && error.message.includes('SSL')) {
+      throw new Error("Error de conexión SSL. Intenta usando NODE_TLS_REJECT_UNAUTHORIZED=0 o verifica la URL del RPC");
+    }
+    
+    throw new Error(`Error creating Argent wallet: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+}
