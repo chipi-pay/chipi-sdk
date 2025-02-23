@@ -1,0 +1,46 @@
+---
+title: "vote"
+description: "Cast a vote in a governance contract on StarkNet."
+---
+
+# vote(params)
+
+Casts a vote in a governance or DAO contract. Internally uses `executeTransaction` to call the `vote` entrypoint.
+
+## Parameters
+
+- **pin** (string): The same PIN used to encrypt the wallet.
+- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
+- **contractAddress** (string): The address of the governance contract.
+- **proposalId** (string): The proposal identifier on which the user is voting.
+- **vote** (string): The vote value (e.g., "yes", "no", "abstain").
+
+## Usage
+
+```ts
+import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+
+const sdk = new ChipiSDK({
+  apiKey: 'your-api-key',
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
+});
+
+// Example: Cast a vote
+await sdk.vote({
+  pin: '1234',
+  wallet: {
+    publicKey: '0x...',
+    encryptedPrivateKey: '...'
+  },
+  contractAddress: '0xGovernanceContract',
+  proposalId: '42',
+  vote: 'yes',
+});
+```
+
+## Return Value
+
+Returns a `Promise<string | null>`:
+
+- **string**: Transaction hash if the vote was recorded successfully.
+- **null**: If there was an error or the transaction failed to send.

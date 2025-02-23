@@ -24,7 +24,10 @@
             "group": "Functions",
             "pages": [
               "functions/create-wallet",
-              "functions/send-transaction"
+              "functions/approve",
+              "functions/stake",
+              "functions/withdraw",
+              "functions/vote"            
             ]
           },
           {

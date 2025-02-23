@@ -1,0 +1,48 @@
+---
+title: "approve"
+description: "Allow a spender to manage tokens on StarkNet."
+---
+
+# approve(params)
+
+Approves a specific spender address to manage tokens from the user’s wallet. Internally uses `executeTransaction` for transaction submission.
+
+## Parameters
+
+- **pin** (string): The same PIN used to encrypt the wallet.
+- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
+- **contractAddress** (string): The token contract address on StarkNet.
+- **spender** (string): The address authorized to spend the user's tokens.
+- **amount** (string | number): The token amount to approve.
+- **decimals** (number, optional): How many decimals the token uses. Defaults to 18.
+
+## Usage
+
+``` ts
+import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+
+const sdk = new ChipiSDK({
+  apiKey: 'your-paymaster-api-key',
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
+});
+
+// Example: Approve tokens
+await sdk.approve({
+  pin: '1234',
+  wallet: {
+    publicKey: '0x...',
+    encryptedPrivateKey: '...'
+  },
+  contractAddress: '0xYourTokenContract',
+  spender: '0xSpenderAddress',
+  amount: 100,
+  decimals: 18,
+});
+```
+
+## Return Value
+
+Returns a `Promise<string | null>`:
+
+- **string**: Transaction hash if the approval succeeded.
+- **null**: If there was an error or the transaction failed to send.

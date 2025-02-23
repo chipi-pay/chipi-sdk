@@ -1,0 +1,48 @@
+---
+title: "withdraw"
+description: "Withdraw tokens from a staking contract on StarkNet."
+---
+
+# withdraw(params)
+
+Withdraws tokens from a staking contract. Internally uses `executeTransaction` to call the `withdraw` entrypoint.
+
+## Parameters
+
+- **pin** (string): The same PIN used to encrypt the wallet.
+- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
+- **contractAddress** (string): The address of the staking contract.
+- **amount** (string | number): The number of tokens to withdraw.
+- **decimals** (number, optional): How many decimals the token uses. Defaults to 18.
+- **recipient** (string): The address that will receive the withdrawn tokens.
+
+## Usage
+
+```ts
+import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+
+const sdk = new ChipiSDK({
+  apiKey: 'your-api-key',
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
+});
+
+// Example: Withdraw tokens
+await sdk.withdraw({
+  pin: '1234',
+  wallet: {
+    publicKey: '0x...',
+    encryptedPrivateKey: '...'
+  },
+  contractAddress: '0xStakingContract',
+  amount: 25,
+  decimals: 18,
+  recipient: '0xYourWalletAddress',
+});
+```
+
+## Return Value
+
+Returns a `Promise<string | null>`:
+
+- **string**: Transaction hash if the withdrawal was successful.
+- **null**: If there was an error or the transaction failed to send.

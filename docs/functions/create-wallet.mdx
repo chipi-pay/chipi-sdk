@@ -1,37 +1,45 @@
 ---
-title: 'createWallet'
-description: 'Create a new wallet'
-icon: 'wallet'
+title: 'create-wallet'
+description: 'Create an Argent wallet on StarkNet.'
 ---
 
-## Basic
+# createWallet(pin)
 
-### Inline Code
+Creates a new Argent-compatible wallet on StarkNet. This function uses Avnu’s paymaster to sponsor gas fees, making the wallet creation process completely frictionless for end users.
 
-To denote a `word` or `phrase` as code, enclose it in backticks (`).
+## Parameters
 
-```
-To denote a `word` or `phrase` as code, enclose it in backticks (`).
-```
+- **pin** (string): A user-defined numeric code or password used to encrypt the generated private key.
 
-### Code Block
+## Usage
 
-Use [fenced code blocks](https://www.markdownguide.org/extended-syntax/#fenced-code-blocks) by enclosing code in three backticks and follow the leading ticks with the programming language of your snippet to get syntax highlighting. Optionally, you can also write the name of your code after the programming language.
+```ts
+import { ChipiSDK } from '@chipi-pay/chipi-sdk';
 
-```java HelloWorld.java
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+const sdk = new ChipiSDK({
+  // Required fields
+  apiKey: 'your-api-key', 
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-api-key', 
+  // Optional fields
+  argentClassHash: '0x...',
+  contractAddress: '0x...',
+  contractEntryPoint: 'get_counter',
+});
+
+async function createArgentWallet() {
+  const result = await sdk.createWallet('1234');
+  console.log(result);
+  // Returns: { success: true, txHash: '0x...'}
 }
 ```
 
-````md
-```java HelloWorld.java
-class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
-}
-```
-````
+## Return Value
+
+This function returns a `Promise<TransactionResult>` object:
+
+- **success** (boolean): Indicates whether the wallet creation transaction was executed successfully.
+- **txHash** (string): The resulting transaction hash on StarkNet.
+
+## Example
+
+If you receive `{ success: true }`, the Argent wallet contract has been deployed. You can then retrieve the wallet details (e.g., public key, encrypted private key) from your configured storage or follow up with additional logic, such as prompting the user to fund their wallet or proceed with other dApp interactions.

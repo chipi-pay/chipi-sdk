@@ -1,0 +1,48 @@
+---
+title: "stake"
+description: "Deposit tokens into a staking contract on StarkNet."
+---
+
+# stake(params)
+
+Deposits tokens into a staking contract. Internally uses `executeTransaction` to call the `deposit` entrypoint on the specified contract.
+
+## Parameters
+
+- **pin** (string): The same PIN used to encrypt the wallet.
+- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
+- **contractAddress** (string): The address of the staking contract.
+- **amount** (string | number): The number of tokens to stake.
+- **recipient** (string): The recipient address for staking benefits or representation.
+- **decimals** (number, optional): How many decimals the token uses. Defaults to 18.
+
+## Usage
+
+``` Ts
+import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+
+const sdk = new ChipiSDK({
+  apiKey: 'your-api-key',
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
+});
+
+// Example: Stake tokens
+await sdk.stake({
+  pin: '1234',
+  wallet: {
+    publicKey: '0x...',
+    encryptedPrivateKey: '...'
+  },
+  contractAddress: '0xStakingContract',
+  amount: 50,
+  recipient: '0xRecipientAddress',
+  decimals: 18,
+});
+```
+
+## Return Value
+
+Returns a `Promise<string | null>`:
+
+- **string**: Transaction hash if the staking was successful.
+- **null**: If there was an error or the transaction failed to send.
