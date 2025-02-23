@@ -1,15 +1,15 @@
 ---
-title: 'create-wallet'
-description: 'Create an Argent wallet on StarkNet.'
+title: "create-wallet"
+description: "Create an Argent-compatible wallet on StarkNet."
 ---
 
 # createWallet(pin)
 
-Creates a new Argent-compatible wallet on StarkNet. This function uses Avnu’s paymaster to sponsor gas fees, making the wallet creation process completely frictionless for end users.
+Creates a new Argent-compatible wallet on StarkNet. This function deploys the wallet contract behind the scenes and uses Avnu’s paymaster to sponsor gas fees, resulting in a frictionless onboarding experience.
 
 ## Parameters
 
-- **pin** (string): A user-defined numeric code or password used to encrypt the generated private key.
+- **pin** (string): A user-defined numeric code or password used to encrypt the wallet’s private key.
 
 ## Usage
 
@@ -17,29 +17,42 @@ Creates a new Argent-compatible wallet on StarkNet. This function uses Avnu’s 
 import { ChipiSDK } from '@chipi-pay/chipi-sdk';
 
 const sdk = new ChipiSDK({
-  // Required fields
-  apiKey: 'your-paymaster-api-key', 
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-api-key', 
-  // Optional fields
-  argentClassHash: '0x...',
-  contractAddress: '0x...',
-  contractEntryPoint: 'get_counter',
+  apiKey: 'your-paymaster-api-key',
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project-id',
+  argentClassHash: '0x...', // optional
+  contractAddress: '0x...',  // optional
+  contractEntryPoint: 'get_counter', // optional
 });
 
 async function createArgentWallet() {
-  const result = await sdk.createWallet('1234');
-  console.log(result);
-  // Returns: { success: true, txHash: '0x...'}
+  try {
+    const result = await sdk.createWallet('1234');
+    console.log(result);
+    // Example response:
+    // {
+    //   success: true,
+    //   accountAddress: '0x000abc...',
+    //   encryptedPrivateKey: 'encrypted_string',
+    //   txHash: '0x12345abc...'
+    // }
+  } catch (error) {
+    // Handle any errors, e.g. SSL issues or RPC misconfigurations
+    console.error("Wallet creation error:", error);
+  }
 }
 ```
 
 ## Return Value
 
-This function returns a `Promise<TransactionResult>` object:
+If successful, returns a `Promise<{ success: boolean; accountAddress: string; encryptedPrivateKey: string; txHash: string }>` with the following fields:
 
-- **success** (boolean): Indicates whether the wallet creation transaction was executed successfully.
+- **success** (boolean): Indicates whether the wallet contract deployment succeeded.
+- **accountAddress** (string): The address of the newly deployed wallet.
+- **encryptedPrivateKey** (string): The user’s private key, encrypted with the provided PIN.
 - **txHash** (string): The resulting transaction hash on StarkNet.
+
+If an error occurs (e.g., SSL connectivity issues or an invalid RPC URL), the function throws an exception that you can catch and handle appropriately.
 
 ## Example
 
-If you receive `{ success: true }`, the Argent wallet contract has been deployed. You can then retrieve the wallet details (e.g., public key, encrypted private key) from your configured storage or follow up with additional logic, such as prompting the user to fund their wallet or proceed with other dApp interactions.
+Use the returned `encryptedPrivateKey` to store securely on your backend or persist in user metadata (e.g., via Clerk). This ensures the user can later restore or manage their wallet without re-deploying the contract.
