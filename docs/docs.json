@@ -11,44 +11,26 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Docs",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
               "introduction",
-              "quickstart",
-              "development"
+              "prerequisites",
+              "quickstart"            ]
+          },
+          {
+            "group": "Hooks",
+            "pages": [
+              "hooks/create-wallet",
+              "hooks/send-transaction"
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Guides",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoint Examples",
-            "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete"
+              "guides/nextjs-clerk-auth"
             ]
           }
         ]
@@ -57,44 +39,40 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
+          "anchor": "Repository",
+          "href": "https://github.com/chipi-pay/chipi-sdk",
+          "icon": "github"
         },
         {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
+          "anchor": "Telegram",
+          "href": "https://t.me/+hSAmfHZvcY9lN2Rh",
+          "icon": "telegram"
         },
         {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "anchor": "Resources",
+          "href": "https://docs.starknet.io/",
           "icon": "newspaper"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/logo/chipi.png",
+    "dark": "/logo/chipi.png"
   },
   "navbar": {
     "links": [
       {
         "label": "Support",
-        "href": "mailto:hi@chipi-pay.com"
+        "href": "mailto:hola@chipipay.com"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.chipi-pay.com"
-    }
+    ]
+
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/chipipay",
-      "github": "https://github.com/chipipay"
+      "x": "https://x.com/hichipipay",
+      "github": "https://github.com/chipi-pay/chipi-sdk"
     }
   }
 }
