@@ -1,114 +1,81 @@
 ---
 title: Introduction
-description: "Welcome to the home of your Chipi SDK documentation"
+description: "Create invisible wallets on StarkNet with social login and Avnu's paymaster"
 ---
-
-<div className="flex justify-center">
-  <img
-    className="block dark:hidden"
-    src="/images/chipi-chunky.png"
-    alt="Chipi SDK - Light Mode"
-  />
-  <img
-    className="hidden dark:block"
-    src="/images/chipi-chunky.png"
-    alt="Chipi SDK - Dark Mode"
-  />
-</div>
 
 ## Getting Started
 
-Kick off your journey with our **Chipi SDK** for setting up invisible wallets on StarkNet using Avnu's paymaster. This documentation will guide you through installation, editing environments, and integrating OAuth providers such as Google, X, and Meta for a frictionless dApp experience.
+**Chipi SDK: The Fastest Way to Ship on StarkNet Mainnet**
 
-```bash
-# Installation
-npm install @chipi-pay/chipi-sdk
-```
+Our SDK solves a major pain point in the StarkNet ecosystem: the lack of mature, ready-to-use tools for wallet integration. By offering invisible wallet creation through social login, we eliminate the need for users to manually manage keys. This approach drastically reduces development time compared to ecosystems like Solana or Ethereum, where such tools already exist.
 
-**Quick Example**:
-
-```js
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
-
-// Initialize SDK
-const sdk = new ChipiSDK({
-  paymasterApiKey: 'your-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-api-key',
-  argentClassHash: '0x...', // optional
-  contractAddress: '0x...',  // optional
-  contractEntryPoint: 'get_counter' // optional
-});
-
-// Create wallet
-const creationResult = await sdk.createWallet('1234');
-// Returns: { success: true, txHash: '0x...' }
-
-// Execute a transaction
-const txHash = await sdk.executeTransaction({
-  pin: '1234',
-  wallet: {
-    publicKey: '0x...',
-    encryptedPrivateKey: 'encrypted...',
-  },
-  calls: [
-    {
-      contractAddress: '0x...',
-      entrypoint: 'increment',
-      calldata: ['0x...']
-    }
-  ]
-});
-// Returns: string (transaction hash) or null if error
-```
+Automate invisible wallet creation on StarkNet with social login and Avnu’s paymaster—speeding up your dApp development cycle.”
 
 <CardGroup cols={2}>
   <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
+    title="Quickstart"
+    icon="book-open-cover"
+    href="/quickstart"
   >
-    Set up your docs locally for easy development and customization.
+    Get started with the Chipi SDK in minutes.
   </Card>
   <Card
-    title="Live Example"
+    title="See Demo"
     icon="eye"
-    href="https://chipi.org/demo"
+    href="https://chipipay.com/"
   >
-    Check out our live demo to see the Chipi SDK in action.
+    Check out our live demo for real-world usage of the Chipi SDK.
   </Card>
 </CardGroup>
 
 ## Customizing Your Experience
 
-Tailor the documentation to your brand's style and discover how to integrate OAuth providers seamlessly.
+With Chipi SDK, you can seamlessly integrate social login, invisible wallets, and Avnu’s paymaster for gas-less transactions. We also provide React hooks and context providers, letting you focus on your app’s core features rather than plumbing.
+
+**Key Features & Benefits**
+
+- **Social Login Integration**  
+  Users log in with Google, X, Meta, etc., removing cumbersome wallet setups.
+
+- **Invisible Wallet Creation**  
+  Wallets are automatically generated and managed behind the scenes, reducing complexity.
+
+- **Avnu’s Paymaster Integration**  
+  Cover transaction fees for a frictionless user experience—no need for users to hold crypto for gas.
+
+- **Secure & Scalable**  
+  Employs best practices for key management and encryption, ensuring robust security on StarkNet.
+
+- **React Hooks & Context**  
+  Simplify your codebase with hooks that abstract away intricate wallet operations.
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Star our Repo"
+    icon="star"
+    href="https://github.com/chipipay/chipi-sdk"
   >
-    Adjust colors, fonts, and other visual elements to match your brand.
+    Show your support on GitHub and keep track of updates.
   </Card>
   <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Enhance your docs with interactive components like accordions and tabs.
-  </Card>
-  <Card
-    title="Integrate OAuth"
+    title="Follow Our Socials"
     icon="users"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    href="https://x.com/chipipay"
   >
-    Connect Google, X, or Meta for seamless social login and wallet generation.
+    Stay informed on new releases and product announcements.
   </Card>
   <Card
-    title="Explore Examples"
-    icon="stars"
-    href="https://mintlify.com/customers"
+    title="Sign up for Beta"
+    icon="rocket"
+    href="https://chipipay.com/beta"
   >
-    Get inspired by real-world implementations and best practices.
+    Check out how the Chipi SDK works to attend unbanked users. 
+  </Card>
+  <Card
+    title="Ping us on Telegram"
+    icon="message"
+    href="https://t.me/+hSAmfHZvcY9lN2Rh"
+  >
+    Connect with other developers and share best practices.
   </Card>
 </CardGroup>
