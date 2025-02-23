@@ -8,99 +8,57 @@ description: 'Set up your environment to use the Chipi SDK.'
 <CodeGroup>
 
 ```bash npm
-npm install @chipi-pay/chipi-sdk  
+npm install @chipi-pay/chipi-sdk
 ```
-
 ```bash yarn
 yarn add @chipi-pay/chipi-sdk
 ```
 
 </CodeGroup>
-**Quick Example**:
 
-<CodeGroup>
-```js React
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+## Additional Steps
 
-// Initialize SDK
-const sdk = new ChipiSDK({
-  paymasterApiKey: 'your-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-api-key',
-  argentClassHash: '0x...', // optional
-  contractAddress: '0x...',  // optional
-  contractEntryPoint: 'get_counter' // optional
-});
+1. **Prepare Your RPC**  
+   We suggest using [Infura for StarkNet](https://www.infura.io/networks/ethereum/starknet). Sign up or log in to get your unique project ID and endpoint URL.
 
-// Create wallet
-const creationResult = await sdk.createWallet('1234');
-// Returns: { success: true, txHash: '0x...' }
+2. **Request Avnu’s Paymaster API Key**  
+   Join their [Telegram channel](https://t.me/avnu_fi) to request an API key, which you’ll use to enable fee coverage for your transactions.
 
-// Execute a transaction
-const txHash = await sdk.executeTransaction({
-  pin: '1234',
-  wallet: {
-    publicKey: '0x...',
-    encryptedPrivateKey: 'encrypted...',
-  },
-  calls: [
-    {
-      contractAddress: '0x...',
-      entrypoint: 'increment',
-      calldata: ['0x...']
-    }
-  ]
-});
-// Returns: string (transaction hash) or null if error
-```
-</CodeGroup>
-<CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Set up your docs locally for easy development and customization.
-  </Card>
-  <Card
-    title="Live Example"
-    icon="eye"
-    href="https://chipi.org/demo"
-  >
-    Check out our live demo to see the Chipi SDK in action.
-  </Card>
-</CardGroup>
+3. **Obtain Your OAuth Provider API Keys**  
+   We recommend [Clerk](https://clerk.com/) or a similar service to streamline social login with providers like Google, X, or Meta. Once configured, you can pass user tokens to the Chipi SDK for invisible wallet creation.
 
-## Customizing Your Experience
 
-Tailor the documentation to your brand's style and discover how to integrate OAuth providers seamlessly.
+## Wanna Deep Dive?
+
+Expand your knowledge with these resources:
 
 <CardGroup cols={2}>
   <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
+    title="Learn to Ship Your First Smart Contract"
+    icon="rocket"
+    href="https://docs.starknet.io/quick-start/overview/"
   >
-    Adjust colors, fonts, and other visual elements to match your brand.
+    Get a quick introduction to building on StarkNet.
   </Card>
   <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
+    title="Sponsor Transactions"
+    icon="hand-holding-dollar"
+    href="https://doc.avnu.fi/avnu-paymaster/overview"
   >
-    Enhance your docs with interactive components like accordions and tabs.
+    Discover how to cover users’ gas fees with Avnu’s paymaster.
   </Card>
   <Card
-    title="Integrate OAuth"
+    title="Set Up Clerk + Next.js"
     icon="users"
-    href="https://mintlify.com/docs/api-playground/openapi"
+    href="https://clerk.com/docs/quickstarts/nextjs"
   >
-    Connect Google, X, or Meta for seamless social login and wallet generation.
+    Seamlessly integrate social login into your Next.js project.
   </Card>
   <Card
-    title="Explore Examples"
-    icon="stars"
-    href="https://mintlify.com/customers"
+    title="See Our Live Demo"
+    icon="eye"
+    href="https://chipipay.com"
   >
-    Get inspired by real-world implementations and best practices.
+    Check out a full example of the Chipi SDK in action.
   </Card>
 </CardGroup>
