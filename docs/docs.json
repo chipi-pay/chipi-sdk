@@ -21,10 +21,10 @@
               "quickstart"            ]
           },
           {
-            "group": "Hooks",
+            "group": "Functions",
             "pages": [
-              "hooks/create-wallet",
-              "hooks/send-transaction"
+              "functions/create-wallet",
+              "functions/send-transaction"
             ]
           },
           {

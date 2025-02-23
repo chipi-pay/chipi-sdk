@@ -18,11 +18,12 @@ description: 'Ship on Mainnet in under a week.'
 
 ## Getting Started
 
-Kick off your journey with our **Chipi SDK** for setting up invisible wallets on StarkNet using Avnu's paymaster. This documentation will guide you through installation, editing environments, and integrating OAuth providers such as Google, X, and Meta for a frictionless dApp experience.
+Before you begin, make sure you've completed the steps in our [Prerequisites](/prerequisites) page. This ensures you have the SDK, RPC, and paymaster keys set up.
 
-**Quick Example**:
+Kick off your journey with our **Chipi SDK** for setting up invisible wallets on StarkNet using Avnu's paymaster. Below is a quick example of how to integrate the SDK and perform basic wallet operations.
 
 <CodeGroup>
+
 ```js React
 import { ChipiSDK } from '@chipi-pay/chipi-sdk';
 
@@ -56,55 +57,12 @@ const txHash = await sdk.executeTransaction({
 });
 // Returns: string (transaction hash) or null if error
 ```
-</CodeGroup>
+</CodeGroup> 
 <CardGroup cols={2}>
-  <Card
-    title="Edit Your Docs"
-    icon="pen-to-square"
-    href="https://mintlify.com/docs/quickstart"
-  >
-    Set up your docs locally for easy development and customization.
-  </Card>
-  <Card
-    title="Live Example"
-    icon="eye"
-    href="https://chipi.org/demo"
-  >
-    Check out our live demo to see the Chipi SDK in action.
-  </Card>
-</CardGroup>
-
-## Customizing Your Experience
-
-Tailor the documentation to your brand's style and discover how to integrate OAuth providers seamlessly.
-
-<CardGroup cols={2}>
-  <Card
-    title="Customize Style"
-    icon="palette"
-    href="https://mintlify.com/docs/settings/global"
-  >
-    Adjust colors, fonts, and other visual elements to match your brand.
-  </Card>
-  <Card
-    title="Add Components"
-    icon="screwdriver-wrench"
-    href="https://mintlify.com/docs/content/components/accordions"
-  >
-    Enhance your docs with interactive components like accordions and tabs.
-  </Card>
-  <Card
-    title="Integrate OAuth"
-    icon="users"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Connect Google, X, or Meta for seamless social login and wallet generation.
-  </Card>
-  <Card
-    title="Explore Examples"
-    icon="stars"
-    href="https://mintlify.com/customers"
-  >
-    Get inspired by real-world implementations and best practices.
-  </Card>
-</CardGroup>
+ <Card title="Edit Your Docs" icon="pen-to-square" href="https://mintlify.com/docs/quickstart" > 
+ Set up your docs locally for easy development and customization. 
+ </Card> 
+ <Card title="Live Example" icon="eye" href="https://chipi.org/demo" > 
+ Check out our live demo to see the Chipi SDK in action. 
+ </Card> 
+ </CardGroup> 
