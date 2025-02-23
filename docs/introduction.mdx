@@ -1,22 +1,65 @@
 ---
 title: Introduction
-description: "Welcome to the home of your new documentation"
+description: "Welcome to the home of your Chipi SDK documentation"
 ---
 
-<img
-  className="block dark:hidden"
-  src="/images/hero-light.png"
-  alt="Hero Light"
-/>
-<img
-  className="hidden dark:block"
-  src="/images/hero-dark.png"
-  alt="Hero Dark"
-/>
+<div className="flex justify-center">
+  <img
+    className="block dark:hidden"
+    src="/images/chipi-chunky.png"
+    alt="Chipi SDK - Light Mode"
+  />
+  <img
+    className="hidden dark:block"
+    src="/images/chipi-chunky.png"
+    alt="Chipi SDK - Dark Mode"
+  />
+</div>
 
-## Setting up
+## Getting Started
 
-The first step to world-class documentation is setting up your editing environments.
+Kick off your journey with our **Chipi SDK** for setting up invisible wallets on StarkNet using Avnu's paymaster. This documentation will guide you through installation, editing environments, and integrating OAuth providers such as Google, X, and Meta for a frictionless dApp experience.
+
+```bash
+# Installation
+npm install @chipi-pay/chipi-sdk
+```
+
+**Quick Example**:
+
+```js
+import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+
+// Initialize SDK
+const sdk = new ChipiSDK({
+  paymasterApiKey: 'your-api-key',
+  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-api-key',
+  argentClassHash: '0x...', // optional
+  contractAddress: '0x...',  // optional
+  contractEntryPoint: 'get_counter' // optional
+});
+
+// Create wallet
+const creationResult = await sdk.createWallet('1234');
+// Returns: { success: true, txHash: '0x...' }
+
+// Execute a transaction
+const txHash = await sdk.executeTransaction({
+  pin: '1234',
+  wallet: {
+    publicKey: '0x...',
+    encryptedPrivateKey: 'encrypted...',
+  },
+  calls: [
+    {
+      contractAddress: '0x...',
+      entrypoint: 'increment',
+      calldata: ['0x...']
+    }
+  ]
+});
+// Returns: string (transaction hash) or null if error
+```
 
 <CardGroup cols={2}>
   <Card
@@ -24,20 +67,20 @@ The first step to world-class documentation is setting up your editing environme
     icon="pen-to-square"
     href="https://mintlify.com/docs/quickstart"
   >
-    Get your docs set up locally for easy development
+    Set up your docs locally for easy development and customization.
   </Card>
   <Card
-    title="Preview Changes"
-    icon="image"
-    href="https://mintlify.com/docs/development"
+    title="Live Example"
+    icon="eye"
+    href="https://chipi.org/demo"
   >
-    Preview your changes before you push to make sure they're perfect
+    Check out our live demo to see the Chipi SDK in action.
   </Card>
 </CardGroup>
 
-## Make it yours
+## Customizing Your Experience
 
-Update your docs to your brand and add valuable content for the best user conversion.
+Tailor the documentation to your brand's style and discover how to integrate OAuth providers seamlessly.
 
 <CardGroup cols={2}>
   <Card
@@ -45,27 +88,27 @@ Update your docs to your brand and add valuable content for the best user conver
     icon="palette"
     href="https://mintlify.com/docs/settings/global"
   >
-    Customize your docs to your company's colors and brands
-  </Card>
-  <Card
-    title="Reference APIs"
-    icon="code"
-    href="https://mintlify.com/docs/api-playground/openapi"
-  >
-    Automatically generate endpoints from an OpenAPI spec
+    Adjust colors, fonts, and other visual elements to match your brand.
   </Card>
   <Card
     title="Add Components"
     icon="screwdriver-wrench"
     href="https://mintlify.com/docs/content/components/accordions"
   >
-    Build interactive features and designs to guide your users
+    Enhance your docs with interactive components like accordions and tabs.
   </Card>
   <Card
-    title="Get Inspiration"
+    title="Integrate OAuth"
+    icon="users"
+    href="https://mintlify.com/docs/api-playground/openapi"
+  >
+    Connect Google, X, or Meta for seamless social login and wallet generation.
+  </Card>
+  <Card
+    title="Explore Examples"
     icon="stars"
     href="https://mintlify.com/customers"
   >
-    Check out our showcase of our favorite documentation
+    Get inspired by real-world implementations and best practices.
   </Card>
 </CardGroup>
