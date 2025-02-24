@@ -1,95 +1,69 @@
 'use strict';
 
-var chunkMPRYGBXW_js = require('./chunk-MPRYGBXW.js');
+var chunkXZCPTBVX_js = require('./chunk-XZCPTBVX.js');
 var gaslessSdk = require('@avnu/gasless-sdk');
-var starknet = require('starknet');
 
-var executePaymasterTransaction = async (input) => {
-  try {
-    const { pin, wallet, calls, rpcUrl, options } = input;
-    const privateKeyDecrypted = chunkMPRYGBXW_js.decryptPrivateKey(
-      wallet.encryptedPrivateKey,
-      pin
-    );
-    if (!privateKeyDecrypted) {
-      throw new Error("Failed to decrypt private key");
-    }
-    const provider = new starknet.RpcProvider({
-      nodeUrl: rpcUrl
-    });
-    const accountAX = new starknet.Account(
-      provider,
-      wallet.publicKey,
-      privateKeyDecrypted
-    );
-    const typeData = await gaslessSdk.fetchBuildTypedData(
-      wallet.publicKey,
-      calls,
-      void 0,
-      void 0,
-      options
-    );
-    const userSignature = await accountAX.signMessage(typeData);
-    const executeTransaction = await gaslessSdk.fetchExecuteTransaction(
-      wallet.publicKey,
-      JSON.stringify(typeData),
-      userSignature,
-      options
-    );
-    return executeTransaction.transactionHash;
-  } catch (error) {
-    console.error("Error sending transaction with paymaster", error);
-    return null;
-  }
-};
+async function prepareTypedDataInternal(input) {
+  const typeData = await gaslessSdk.fetchBuildTypedData(
+    input.publicKey,
+    input.calls,
+    void 0,
+    void 0,
+    input.options
+  );
+  return typeData;
+}
+async function executeSponsoredTransactionInternal(input) {
+  const { publicKey, typeData, userSignature, options } = input;
+  const executeTransaction = await gaslessSdk.fetchExecuteTransaction(
+    publicKey,
+    JSON.stringify(typeData),
+    userSignature,
+    options
+  );
+  return executeTransaction.transactionHash;
+}
 
-// src/core/chipi-sdk.ts
-var ChipiSDK = class {
+// src/core/chipi-client.ts
+var ChipiClient = class {
+  // private rpcUrl: string;
+  // private argentClassHash: string;
+  // private contractAddress: string;
+  // private contractEntryPoint: string;
   constructor(config) {
-    this.options = {
+    this.paymasterOptions = {
       baseUrl: gaslessSdk.BASE_URL,
       apiKey: config.apiKey
     };
-    this.rpcUrl = config.rpcUrl;
-    this.argentClassHash = config.argentClassHash;
-    this.contractAddress = config.contractAddress;
-    this.contractEntryPoint = config.contractEntryPoint || "get_counter";
   }
-  // async createWallet(encryptKey: string): Promise<TransactionResult> {
-  //   return createArgentWallet({
-  //     encryptKey,
-  //   });
-  // }
-  async executeTransaction(input) {
-    return executePaymasterTransaction({
+  async prepareTypedData(input) {
+    return prepareTypedDataInternal({
       ...input,
-      rpcUrl: this.rpcUrl,
-      options: this.options
+      options: this.paymasterOptions
+    });
+  }
+  async executeSponsoredTransaction(input) {
+    return executeSponsoredTransactionInternal({
+      ...input,
+      options: this.paymasterOptions
     });
   }
 };
+var export_useSign = void 0;
 
 Object.defineProperty(exports, "ChipiProvider", {
   enumerable: true,
-  get: function () { return chunkMPRYGBXW_js.ChipiProvider; }
-});
-Object.defineProperty(exports, "createArgentWallet", {
-  enumerable: true,
-  get: function () { return chunkMPRYGBXW_js.createArgentWallet; }
+  get: function () { return chunkXZCPTBVX_js.ChipiProvider; }
 });
 Object.defineProperty(exports, "useChipiContext", {
   enumerable: true,
-  get: function () { return chunkMPRYGBXW_js.useChipiContext; }
+  get: function () { return chunkXZCPTBVX_js.useChipiContext; }
 });
 Object.defineProperty(exports, "useCreateWallet", {
   enumerable: true,
-  get: function () { return chunkMPRYGBXW_js.useCreateWallet; }
+  get: function () { return chunkXZCPTBVX_js.useCreateWallet; }
 });
-Object.defineProperty(exports, "useSign", {
-  enumerable: true,
-  get: function () { return chunkMPRYGBXW_js.useSign; }
-});
-exports.ChipiSDK = ChipiSDK;
-exports.executePaymasterTransaction = executePaymasterTransaction;
+exports.ChipiClient = ChipiClient;
+exports.useSign = export_useSign;
 //# sourceMappingURL=index.js.map
 //# sourceMappingURL=index.js.map

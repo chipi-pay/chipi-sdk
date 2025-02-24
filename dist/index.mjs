@@ -1,73 +1,54 @@
-import { decryptPrivateKey } from './chunk-UQHO6PUW.mjs';
-export { ChipiProvider, createArgentWallet, useChipiContext, useCreateWallet, useSign } from './chunk-UQHO6PUW.mjs';
-import { fetchBuildTypedData, fetchExecuteTransaction, BASE_URL } from '@avnu/gasless-sdk';
-import { RpcProvider, Account } from 'starknet';
+export { ChipiProvider, useChipiContext, useCreateWallet } from './chunk-QRYK56XM.mjs';
+import { BASE_URL, fetchBuildTypedData, fetchExecuteTransaction } from '@avnu/gasless-sdk';
 
-var executePaymasterTransaction = async (input) => {
-  try {
-    const { pin, wallet, calls, rpcUrl, options } = input;
-    const privateKeyDecrypted = decryptPrivateKey(
-      wallet.encryptedPrivateKey,
-      pin
-    );
-    if (!privateKeyDecrypted) {
-      throw new Error("Failed to decrypt private key");
-    }
-    const provider = new RpcProvider({
-      nodeUrl: rpcUrl
-    });
-    const accountAX = new Account(
-      provider,
-      wallet.publicKey,
-      privateKeyDecrypted
-    );
-    const typeData = await fetchBuildTypedData(
-      wallet.publicKey,
-      calls,
-      void 0,
-      void 0,
-      options
-    );
-    const userSignature = await accountAX.signMessage(typeData);
-    const executeTransaction = await fetchExecuteTransaction(
-      wallet.publicKey,
-      JSON.stringify(typeData),
-      userSignature,
-      options
-    );
-    return executeTransaction.transactionHash;
-  } catch (error) {
-    console.error("Error sending transaction with paymaster", error);
-    return null;
-  }
-};
+async function prepareTypedDataInternal(input) {
+  const typeData = await fetchBuildTypedData(
+    input.publicKey,
+    input.calls,
+    void 0,
+    void 0,
+    input.options
+  );
+  return typeData;
+}
+async function executeSponsoredTransactionInternal(input) {
+  const { publicKey, typeData, userSignature, options } = input;
+  const executeTransaction = await fetchExecuteTransaction(
+    publicKey,
+    JSON.stringify(typeData),
+    userSignature,
+    options
+  );
+  return executeTransaction.transactionHash;
+}
 
-// src/core/chipi-sdk.ts
-var ChipiSDK = class {
+// src/core/chipi-client.ts
+var ChipiClient = class {
+  // private rpcUrl: string;
+  // private argentClassHash: string;
+  // private contractAddress: string;
+  // private contractEntryPoint: string;
   constructor(config) {
-    this.options = {
+    this.paymasterOptions = {
       baseUrl: BASE_URL,
       apiKey: config.apiKey
     };
-    this.rpcUrl = config.rpcUrl;
-    this.argentClassHash = config.argentClassHash;
-    this.contractAddress = config.contractAddress;
-    this.contractEntryPoint = config.contractEntryPoint || "get_counter";
   }
-  // async createWallet(encryptKey: string): Promise<TransactionResult> {
-  //   return createArgentWallet({
-  //     encryptKey,
-  //   });
-  // }
-  async executeTransaction(input) {
-    return executePaymasterTransaction({
+  async prepareTypedData(input) {
+    return prepareTypedDataInternal({
       ...input,
-      rpcUrl: this.rpcUrl,
-      options: this.options
+      options: this.paymasterOptions
+    });
+  }
+  async executeSponsoredTransaction(input) {
+    return executeSponsoredTransactionInternal({
+      ...input,
+      options: this.paymasterOptions
     });
   }
 };
+var export_useSign = void 0;
 
-export { ChipiSDK, executePaymasterTransaction };
+export { ChipiClient, export_useSign as useSign };
 //# sourceMappingURL=index.mjs.map
 //# sourceMappingURL=index.mjs.map

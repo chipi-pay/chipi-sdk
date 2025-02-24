@@ -1,10 +1,11 @@
-import { Call } from "starknet";
+import { GaslessOptions } from "@avnu/gasless-sdk";
+import { Call, Signature, TypedData } from "starknet";
+
+
 export interface ChipiSDKConfig {
     apiKey: string;
-    rpcUrl: string;
-    argentClassHash: string;
-    contractAddress: string;
-    contractEntryPoint?: string;
+    // rpcUrl: string;
+    // argentClassHash: string;
   }
   
   export interface WalletData {
@@ -34,14 +35,16 @@ export interface SimpleTransactionInput {
     contractAddress: string;
     calls: Call[];
 }
-export interface TransactionInput {
-    pin: string;
-    wallet: WalletData;
-    calls: Call[];
+
+// PAYMASTER
+export interface ExecuteSponsoredTransactionParams {
+    publicKey: string;
+    typeData: TypedData;
+    userSignature: Signature;
 }
-export interface TransactionResult {
-    success: boolean;
-    accountAddress: string;
-    encryptedPrivateKey: string;
-    txHash: string;
-  } 
+
+export interface PrepareTypedDataParams {
+    publicKey: string;
+    calls: Call[];
+    
+  }
