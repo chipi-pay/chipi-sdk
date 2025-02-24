@@ -2,6 +2,7 @@ import type { GaslessOptions } from "@avnu/gasless-sdk";
 export interface CreateWalletParams {
     pin: string;
     rpcUrl: string;
+    network: "mainnet" | "sepolia";
     options: GaslessOptions;
     argentClassHash: string;
     contractAddress: string;

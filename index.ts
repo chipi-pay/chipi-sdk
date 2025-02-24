@@ -1,4 +1,4 @@
-import { GaslessOptions, BASE_URL } from "@avnu/gasless-sdk";
+import { GaslessOptions, BASE_URL, SEPOLIA_BASE_URL } from "@avnu/gasless-sdk";
 import { createArgentWallet } from "./src/create-wallet";
 import { executePaymasterTransaction } from "./src/send-transaction-with-paymaster";
 import type { ChipiSDKConfig, TransactionInput, TransactionResult, WalletData, SimpleTransactionInput } from "./src/types";
@@ -11,13 +11,14 @@ export class ChipiSDK {
   private argentClassHash: string;
   private contractAddress: string;
   private contractEntryPoint: string;
-
+  private network: "mainnet" | "sepolia";
   constructor(config: ChipiSDKConfig) {
     this.options = {
-      baseUrl: BASE_URL,
+      baseUrl: config.network === "mainnet" ? BASE_URL : SEPOLIA_BASE_URL,
       apiKey: config.apiKey,
     };
     this.rpcUrl = config.rpcUrl;
+    this.network = config.network;
     this.argentClassHash = config.argentClassHash;
     this.contractAddress = config.contractAddress;
     this.contractEntryPoint = config.contractEntryPoint || "get_counter";
@@ -27,6 +28,7 @@ export class ChipiSDK {
     return createArgentWallet({
       pin,
       rpcUrl: this.rpcUrl,
+      network: this.network,
       options: this.options,
       argentClassHash: this.argentClassHash,
       contractAddress: this.contractAddress,

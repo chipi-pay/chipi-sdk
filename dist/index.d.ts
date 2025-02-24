@@ -5,6 +5,7 @@ export declare class ChipiSDK {
     private argentClassHash;
     private contractAddress;
     private contractEntryPoint;
+    private network;
     constructor(config: ChipiSDKConfig);
     createWallet(pin: string): Promise<TransactionResult>;
     private formatAmount;
@@ -40,6 +41,13 @@ export declare class ChipiSDK {
         amount: string | number;
         decimals?: number;
         recipient: string;
+    }): Promise<string | null>;
+    vote(params: {
+        pin: string;
+        wallet: WalletData;
+        contractAddress: string;
+        proposalId: string;
+        vote: string;
     }): Promise<string | null>;
 }
 export type { ChipiSDKConfig, TransactionInput, TransactionResult };

@@ -2,6 +2,7 @@ import { Call } from "starknet";
 export interface ChipiSDKConfig {
     apiKey: string;
     rpcUrl: string;
+    network: "mainnet" | "sepolia";
     argentClassHash: string;
     contractAddress: string;
     contractEntryPoint?: string;

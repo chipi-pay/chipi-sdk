@@ -8,10 +8,11 @@ const starknet_1 = require("starknet");
 class ChipiSDK {
     constructor(config) {
         this.options = {
-            baseUrl: gasless_sdk_1.BASE_URL,
+            baseUrl: config.network === "mainnet" ? gasless_sdk_1.BASE_URL : gasless_sdk_1.SEPOLIA_BASE_URL,
             apiKey: config.apiKey,
         };
         this.rpcUrl = config.rpcUrl;
+        this.network = config.network;
         this.argentClassHash = config.argentClassHash;
         this.contractAddress = config.contractAddress;
         this.contractEntryPoint = config.contractEntryPoint || "get_counter";
@@ -20,6 +21,7 @@ class ChipiSDK {
         return (0, create_wallet_1.createArgentWallet)({
             pin,
             rpcUrl: this.rpcUrl,
+            network: this.network,
             options: this.options,
             argentClassHash: this.argentClassHash,
             contractAddress: this.contractAddress,
@@ -90,6 +92,18 @@ class ChipiSDK {
                     contractAddress: params.contractAddress,
                     entrypoint: 'withdraw',
                     calldata: [this.formatAmount(params.amount, params.decimals), params.recipient]
+                }]
+        });
+    }
+    async vote(params) {
+        return this.executeTransaction({
+            pin: params.pin,
+            wallet: params.wallet,
+            contractAddress: params.contractAddress,
+            calls: [{
+                    contractAddress: params.contractAddress,
+                    entrypoint: 'vote',
+                    calldata: [params.proposalId, params.vote]
                 }]
         });
     }

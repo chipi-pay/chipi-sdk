@@ -34,7 +34,7 @@ const createArgentWallet = async (params) => {
                 calldata: [contractAddress],
             },
         ];
-        const typeData = await (0, gasless_sdk_1.fetchBuildTypedData)(contractAddress, initialValue, undefined, undefined, { baseUrl: gasless_sdk_1.BASE_URL, apiKey: params.options.apiKey }, accountClassHash);
+        const typeData = await (0, gasless_sdk_1.fetchBuildTypedData)(contractAddress, initialValue, undefined, undefined, { baseUrl: params.network === "mainnet" ? gasless_sdk_1.BASE_URL : gasless_sdk_1.SEPOLIA_BASE_URL, apiKey: params.options.apiKey }, accountClassHash);
         const userSignature = await account.signMessage(typeData);
         const deploymentData = {
             class_hash: accountClassHash,

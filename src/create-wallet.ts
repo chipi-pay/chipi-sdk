@@ -1,6 +1,7 @@
 import type { DeploymentData, GaslessOptions } from "@avnu/gasless-sdk";
 import {
   BASE_URL,
+  SEPOLIA_BASE_URL,
   fetchBuildTypedData,
   fetchExecuteTransaction,
 } from "@avnu/gasless-sdk";
@@ -22,6 +23,7 @@ import { encryptPrivateKey } from "./lib/encryption";
 export interface CreateWalletParams {
   pin: string;
   rpcUrl: string;
+  network: "mainnet" | "sepolia";
   options: GaslessOptions;
   argentClassHash: string;
   contractAddress: string;
@@ -76,7 +78,7 @@ export const createArgentWallet = async (params: CreateWalletParams) => {
         initialValue,
         undefined,
         undefined,
-        {baseUrl: BASE_URL, apiKey: params.options.apiKey},
+        {baseUrl: params.network === "mainnet" ? BASE_URL : SEPOLIA_BASE_URL, apiKey: params.options.apiKey},
         accountClassHash,
       );
     
