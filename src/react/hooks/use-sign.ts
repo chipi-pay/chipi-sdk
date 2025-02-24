@@ -50,60 +50,68 @@ async function sign(params: SignParams) {
   if (!privateKeyDecrypted) {
     throw new Error("Failed to decrypt private key");
   }
+  try {
+    // Initialising the provider
+    const provider = new RpcProvider({
+      nodeUrl,
+    });
 
-  // Initialising the provider
-  const provider = new RpcProvider({
-    nodeUrl,
-  });
+    const accountAX = new Account(
+      provider,
+      wallet.publicKey,
+      privateKeyDecrypted
+    );
 
-  const accountAX = new Account(
-    provider,
-    wallet.publicKey,
-    privateKeyDecrypted
-  );
+    // Prepare transaction
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        publicKey: wallet.publicKey,
+        calls: calls,
+        operation: "prepare",
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`API error: ${response.statusText}`);
+    }
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-    },
-    body: JSON.stringify({
-      publicKey: wallet.publicKey,
-      calls: calls,
-      operation: "prepare",
-    }),
-  });
-  const typeData = (await response.json()) as TypedData;
+    const typeData = (await response.json()) as TypedData;
 
-  // Sign the message
-  const userSignature = await accountAX.signMessage(typeData);
+    // Sign the message
+    const userSignature = await accountAX.signMessage(typeData);
 
-  // Execute the transaction
-  const executeResponse = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-    },
-    body: JSON.stringify({
-      publicKey: wallet.publicKey,
-      typeData: JSON.stringify(typeData),
-      userSignature,
-      operation: "execute",
-    }),
-  });
-  const responseData = (await executeResponse.json()) as {
-    transactionHash: string;
-  };
+    // Execute the transaction
+    const executeResponse = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+      },
+      body: JSON.stringify({
+        publicKey: wallet.publicKey,
+        typeData: JSON.stringify(typeData),
+        userSignature,
+        operation: "execute",
+      }),
+    });
+    if (!executeResponse.ok) {
+      throw new Error(
+        `API error during execution: ${executeResponse.statusText}`
+      );
+    }
 
-  return responseData.transactionHash;
+    const responseData = (await executeResponse.json()) as {
+      transactionHash: string;
+    };
+    return responseData.transactionHash;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(`Transaction failed: ${error.message}`);
+    }
+    throw error;
+  }
 }
-
-// export function useSign(){
-//   return {
-//     sign: () => {
-//       return "sign 3";
-//     }
-//   }
-// }
