@@ -18,51 +18,108 @@ description: 'Ship on Mainnet in under a week.'
 
 ## Getting Started
 
-Before you begin, make sure you've completed the steps in our [Prerequisites](/prerequisites) page. This ensures you have the SDK, RPC, and paymaster keys set up.
+Before you begin, make sure you've completed the steps in our [Prerequisites](/prerequisites) page. This ensures you have:
+1. Installed the SDK
+2. Set up your environment variables
+3. Configured the ChipiProvider in your app layout
 
-Kick off your journey with our **Chipi SDK** for setting up invisible wallets on StarkNet using Avnu's paymaster. Below is a quick example of how to integrate the SDK and perform basic wallet operations.
+## Implementing the SDK
 
-<CodeGroup>
+Chipi SDK provides React hooks for all actions, making it easy to integrate invisible wallets into your applications. Here's how to use them in a Next.js project:
 
-```js React
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+```tsx
+// app/page.tsx
+import {
+  useApprove,
+  useStake,
+  useCreateWallet,
+  useTransfer,
+  useWithdraw,
+  useCallAnyContract,
+} from "@chipi-pay/chipi-sdk";
 
-// Initialize SDK
-const sdk = new ChipiSDK({
-  paymasterapiKey: 'your-paymaster-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-api-key',
-  argentClassHash: '0x...', // optional
-  contractAddress: '0x...',  // optional
-  contractEntryPoint: 'get_counter' // optional
-});
+export default function Home() {
+  const { createWalletAsync, createWalletResponse } =
+    useCreateWallet();
+  const { transferAsync } = useTransfer();
 
-// Create wallet
-const creationResult = await sdk.createWallet('1234');
-// Returns: { success: true, txHash: '0x...' }
+  const handleCreateWallet = async (pin: string) => {
+    const response = await createWalletAsync(pin);
+    console.log("creation response", response);
+    alert("Wallet created");
+  };
 
-// Execute a transaction
-const txHash = await sdk.executeTransaction({
-  pin: '1234',
-  wallet: {
-    publicKey: '0x...',
-    encryptedPrivateKey: 'encrypted...',
-  },
-  calls: [
-    {
-      contractAddress: '0x...',
-      entrypoint: 'increment',
-      calldata: ['0x...']
-    }
-  ]
-});
-// Returns: string (transaction hash) or null if error
+  const handleTransfer = async (params) => {
+    const response = await transferAsync(params);
+    console.log("transfer response", response);
+    alert("Transferred");
+  };
+
+  return (
+    <div>
+      <h1>Chipi SDK</h1>
+      <button onClick={() => handleCreateWallet("1234")}>Create Wallet</button>
+      <button onClick={() => handleTransfer({
+        recipient: "0x123...", 
+        amount: "0.01", 
+        token: "ETH"
+      })}>Transfer</button>
+    </div>
+  );
+}
 ```
-</CodeGroup> 
+
+### Security Notice
+<Alert type="danger">
+
+**PIN Storage Warning**  
+The hardcoded PIN in this demo serves **testing purposes only**. In production:
+
+1. **Never store PINs** in your database unless building custodial wallets
+2. Custodial approach (storing PINs) requires:
+   - Enterprise-grade security measures
+   - Regular security audits
+   - Clear user disclosures
+3. For non-custodial wallets:
+   - Have users enter PIN client-side only
+   - Never transmit/store PINs on your servers
+   - Use client-side encryption
+
+</Alert>
+
+## Available Hooks
+
+The SDK provides these core hooks for interacting with StarkNet:
+
+- `useCreateWallet()` - Generate invisible wallets for users
+- `useApprove()` - Authorize token spending
+- `useStake()` - Stake assets in supported protocols
+- `useWithdraw()` - Withdraw assets from contracts
+- `useTransfer()` - Send tokens to other wallets
+- `useCallAnyContract()` - Interact with any StarkNet contract
+
+Each hook returns:
+- An async function for the action (e.g., `createWalletAsync`)
+- A response object with the result (e.g., `createWalletResponse`)
+- Loading and error states to manage UI feedback
+
+## Complete Example
+
+For a more comprehensive example including user authentication with Clerk, see our [Next.js + Clerk Auth Guide](/guides/nextjs-clerk-auth).
+
 <CardGroup cols={2}>
- <Card title="Edit Your Docs" icon="pen-to-square" href="https://mintlify.com/docs/quickstart" > 
- Set up your docs locally for easy development and customization. 
- </Card> 
- <Card title="Live Example" icon="eye" href="https://chipi.org/demo" > 
- Check out our live demo to see the Chipi SDK in action. 
- </Card> 
- </CardGroup> 
+  <Card
+    title="Explore Actions"
+    icon="bolt"
+    href="/actions/create-wallet"
+  >
+    Dive deeper into each SDK action with detailed examples.
+  </Card>
+  <Card
+    title="Live Example"
+    icon="eye"
+    href="https://chipi-sdk-clerk-demo.vercel.app/"
+  >
+    Check out our live demo to see the Chipi SDK in action.
+  </Card>
+</CardGroup> 
