@@ -16,13 +16,77 @@ yarn add @chipi-pay/chipi-sdk
 
 </CodeGroup>
 
+## Setup the Provider
+
+The first step is to wrap your application with the `ChipiProvider` component. This provider initializes the SDK and makes all the hooks available throughout your application.
+
+Create a providers file (e.g., `app/providers.tsx` for Next.js):
+
+```tsx
+// app/providers.tsx
+
+// Initialize SDK
+import { ChipiProvider } from "@chipi-pay/chipi-sdk";
+
+const AVNU_API_KEY = process.env.NEXT_PUBLIC_AVNU_API_KEY!;
+const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY!;
+
+if (!AVNU_API_KEY || !INFURA_API_KEY) {
+  throw new Error("AVNU_API_KEY or INFURA_API_KEY is not set");
+}
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ChipiProvider
+      config={{
+        apiKey: AVNU_API_KEY,
+        rpcUrl:
+          `https://starknet-mainnet.infura.io/v3/${INFURA_API_KEY}`,
+        network: "mainnet",
+      }}
+    >
+      {children}
+    </ChipiProvider>
+  );
+}
+```
+
+Then import and use this provider in your layout file (e.g., `app/layout.tsx` for Next.js):
+
+```tsx
+// app/layout.tsx
+import { Providers } from './providers';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <body>
+        <Providers>
+          {children}
+        </Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+This setup:
+1. Initializes the SDK with your Avnu Paymaster API key
+2. Connects to StarkNet via your Infura endpoint
+3. Makes all Chipi SDK hooks available throughout your application
+4. Sets up the wallet management infrastructure
+
 ## Additional Steps
 
 1. **Prepare Your RPC**  
    We suggest using [Infura for StarkNet](https://www.infura.io/networks/ethereum/starknet). Sign up or log in to get your unique project ID and endpoint URL.
 
-2. **Request Avnu’s Paymaster API Key**  
-   Join their [Telegram channel](https://t.me/avnu_fi) to request an API key, which you’ll use to enable fee coverage for your transactions.
+2. **Request Avnu's Paymaster API Key**  
+   Join their [Telegram channel](https://t.me/avnu_fi) to request an API key, which you'll use to enable fee coverage for your transactions.
 
 3. **Obtain Your OAuth Provider API Keys**  
    We recommend [Clerk](https://clerk.com/) or a similar service to streamline social login with providers like Google, X, or Meta. Once configured, you can pass user tokens to the Chipi SDK for invisible wallet creation.
@@ -45,7 +109,7 @@ Expand your knowledge with these resources:
     icon="hand-holding-dollar"
     href="https://doc.avnu.fi/avnu-paymaster/overview"
   >
-    Discover how to cover users’ gas fees with Avnu’s paymaster.
+    Discover how to cover users' gas fees with Avnu's paymaster.
   </Card>
   <Card
     title="Set Up Clerk + Next.js"

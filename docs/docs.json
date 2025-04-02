@@ -21,13 +21,14 @@
               "quickstart"            ]
           },
           {
-            "group": "Functions",
+            "group": "Actions",
             "pages": [
-              "functions/create-wallet",
-              "functions/approve",
-              "functions/stake",
-              "functions/withdraw",
-              "functions/vote"            
+              "actions/create-wallet",
+              "actions/approve",
+              "actions/stake",
+              "actions/withdraw",
+              "actions/transfer",
+              "actions/call-any-contract"            
             ]
           },
           {
