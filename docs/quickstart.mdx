@@ -23,35 +23,26 @@ Before you begin, make sure you've completed the steps in our [Prerequisites](/p
 2. Set up your environment variables
 3. Configured the ChipiProvider in your app layout
 
+## Critical Security Notice
+
+<Alert type="danger">
+
+### 🔒 PIN Security Requirements
+
+**Production Requirements**  
+- **Never hardcode PINs** - Use client-side input only  
+- **Non-custodial recommendation:**  
+  - PINs stay on user devices  
+  - Never transmit/store PINs on your servers  
+- **Custodial (advanced):**  
+  - Requires enterprise security measures  
+  - Regular third-party audits  
+
+</Alert>
+
 ## Implementing the SDK
 
 Chipi SDK provides React hooks for all actions, making it easy to integrate invisible wallets into your applications. Here's how to use them in a Next.js project:
-
-## Critical Security Notice
-<Alert type="danger" icon="⚠️">
-
-### PIN Management Requirements
-
-**1. Never Store User PINs**  
-   - Unless explicitly building custodial wallets
-   - Even then, requires enterprise-grade encryption
-
-**2. Production Requirements**  
-   - PINs must **never** be hardcoded
-   - Client-side input only (never send to your servers)
-   - Use secure enclaves/SHSM if storing
-
-**3. Custodial vs Non-Custodial**  
-   - 🛡️ **Custodial (Not Recommended):**  
-     - Requires SOC 2 compliance
-     - Regular third-party audits
-     - User consent for key management
-   - 🔑 **Non-Custodial (Preferred):**  
-     - PIN never leaves user device
-     - Client-side encryption only
-     - Zero knowledge of user keys
-
-</Alert>
 
 ## Available Hooks
 
