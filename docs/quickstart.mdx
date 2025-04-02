@@ -27,63 +27,29 @@ Before you begin, make sure you've completed the steps in our [Prerequisites](/p
 
 Chipi SDK provides React hooks for all actions, making it easy to integrate invisible wallets into your applications. Here's how to use them in a Next.js project:
 
-```tsx
-// app/page.tsx
-import {
-  useApprove,
-  useStake,
-  useCreateWallet,
-  useTransfer,
-  useWithdraw,
-  useCallAnyContract,
-} from "@chipi-pay/chipi-sdk";
+## Critical Security Notice
+<Alert type="danger" icon="⚠️">
 
-export default function Home() {
-  const { createWalletAsync, createWalletResponse } =
-    useCreateWallet();
-  const { transferAsync } = useTransfer();
+### PIN Management Requirements
 
-  const handleCreateWallet = async (pin: string) => {
-    const response = await createWalletAsync(pin);
-    console.log("creation response", response);
-    alert("Wallet created");
-  };
+**1. Never Store User PINs**  
+   - Unless explicitly building custodial wallets
+   - Even then, requires enterprise-grade encryption
 
-  const handleTransfer = async (params) => {
-    const response = await transferAsync(params);
-    console.log("transfer response", response);
-    alert("Transferred");
-  };
+**2. Production Requirements**  
+   - PINs must **never** be hardcoded
+   - Client-side input only (never send to your servers)
+   - Use secure enclaves/SHSM if storing
 
-  return (
-    <div>
-      <h1>Chipi SDK</h1>
-      <button onClick={() => handleCreateWallet("1234")}>Create Wallet</button>
-      <button onClick={() => handleTransfer({
-        recipient: "0x123...", 
-        amount: "0.01", 
-        token: "ETH"
-      })}>Transfer</button>
-    </div>
-  );
-}
-```
-
-### Security Notice
-<Alert type="danger">
-
-**PIN Storage Warning**  
-The hardcoded PIN in this demo serves **testing purposes only**. In production:
-
-1. **Never store PINs** in your database unless building custodial wallets
-2. Custodial approach (storing PINs) requires:
-   - Enterprise-grade security measures
-   - Regular security audits
-   - Clear user disclosures
-3. For non-custodial wallets:
-   - Have users enter PIN client-side only
-   - Never transmit/store PINs on your servers
-   - Use client-side encryption
+**3. Custodial vs Non-Custodial**  
+   - 🛡️ **Custodial (Not Recommended):**  
+     - Requires SOC 2 compliance
+     - Regular third-party audits
+     - User consent for key management
+   - 🔑 **Non-Custodial (Preferred):**  
+     - PIN never leaves user device
+     - Client-side encryption only
+     - Zero knowledge of user keys
 
 </Alert>
 
