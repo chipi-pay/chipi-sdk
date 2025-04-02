@@ -122,4 +122,149 @@ For a more comprehensive example including user authentication with Clerk, see o
   >
     Check out our live demo to see the Chipi SDK in action.
   </Card>
-</CardGroup> 
+</CardGroup>
+
+## Real-World Example: USDC Transfer
+
+Here's a complete implementation for transferring USDC tokens using the Chipi SDK:
+
+```tsx
+'use client'
+
+import { useTransfer } from "@chipi-pay/chipi-sdk";
+import { useState, useEffect } from "react";
+import { getWalletData } from "./_actions"; // Server action to fetch wallet
+
+// Mainnet USDC Contract Address
+const USDC_CONTRACT = "0x053c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8";
+
+export function Transfer() {
+  const { transferAsync, transferData } = useTransfer();
+  const [walletData, setWalletData] = useState<{ 
+    publicKey: string; 
+    privateKey: string 
+  } | null>(null);
+
+  // Hardcoded PIN for demo purposes (explained below)
+  const DEMO_PIN = '1234';
+
+  // Fetch wallet data on component mount
+  useEffect(() => {
+    const loadWallet = async () => {
+      const data = await getWalletData();
+      if (data?.publicKey && data?.privateKey) {
+        setWalletData(data);
+      }
+    };
+    loadWallet();
+  }, []);
+
+  const handleTransfer = async (recipient: string, amount: string) => {
+    if (!walletData) return;
+    
+    try {
+      await transferAsync({
+        encryptKey: DEMO_PIN, // Using hardcoded PIN
+        wallet: {
+          publicKey: walletData.publicKey,
+          encryptedPrivateKey: walletData.privateKey
+        },
+        contractAddress: USDC_CONTRACT,
+        recipient,
+        amount,
+        decimals: 6 // USDC uses 6 decimals
+      });
+      alert('Transfer initiated!');
+    } catch (error) {
+      console.error('Transfer failed:', error);
+      alert('Transfer failed - check console');
+    }
+  };
+
+  return (
+    <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md">
+      <h2 className="text-2xl font-bold mb-4">USDC Transfer</h2>
+      <button 
+        onClick={() => handleTransfer(
+          '0x123...', // Hardcoded recipient
+          '10' // $10 USDC
+        )}
+        className="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+      >
+        Transfer 10 USDC
+      </button>
+      
+      {transferData && (
+        <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+          <p className="text-sm font-mono break-all">
+            TX Hash: {transferData}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Code Breakdown
+
+### 1. Security Setup
+```tsx
+const DEMO_PIN = '1234'; 
+```
+- **Why Hardcode?** Simplifies testing/demos (never do this in production)
+- **Production Note:** In real apps, derive PIN from user authentication
+
+### 2. Wallet Management
+```tsx
+const [walletData, setWalletData] = useState<...>();
+useEffect(() => {
+  const loadWallet = async () => {
+    const data = await getWalletData();
+    // ...
+  };
+  loadWallet();
+}, []);
+```
+- **getWalletData:** Server action fetching encrypted wallet from your backend
+- **Automatic Load:** Fetches wallet on component mount using useEffect
+
+### 3. Transfer Execution
+```tsx
+const handleTransfer = async (recipient, amount) => {
+  await transferAsync({
+    encryptKey: DEMO_PIN,
+    // ... other params
+  });
+}
+```
+- **transferAsync:** SDK method handling entire transfer flow
+- **Parameters:**
+  - `encryptKey`: PIN to decrypt private key
+  - `contractAddress`: USDC token contract
+  - `decimals`: Token precision (6 for USDC)
+
+### 4. UI Feedback
+```tsx
+{transferData && (
+  <div className="...">
+    <p className="...">TX Hash: {transferData}</p>
+  </div>
+)}
+```
+- Shows transaction hash after successful transfer
+- Can link to StarkScan for verification
+
+## Full Production Setup
+
+For a complete implementation including:
+- Dynamic PIN management
+- Error handling
+- Loading states
+- Real-time balance updates
+
+See our [Complete Integration Guide](/guides/full-integration).
+
+<Alert type="warning">
+Never hardcode PINs in production! This example simplifies for demonstration purposes. Always implement proper authentication flows.
+</Alert> 
