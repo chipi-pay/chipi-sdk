@@ -1,46 +1,140 @@
 ---
 title: "vote"
-description: "Cast a vote in a governance contract on StarkNet."
+description: "Participate in governance decisions."
 ---
 
-# vote(params)
+# useVote()
 
-Casts a vote in a governance or DAO contract. Internally uses `executeTransaction` to call the `vote` entrypoint.
+Casts a vote in a DAO or governance contract. Requires voting rights in the specified contract.
 
 ## Parameters
 
-- **pin** (string): The same PIN used to encrypt the wallet.
-- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
-- **contractAddress** (string): The address of the governance contract.
-- **proposalId** (string): The proposal identifier on which the user is voting.
-- **vote** (string): The vote value (e.g., "yes", "no", "abstain").
+- **encryptKey** (string): User's decryption PIN
+- **wallet** (WalletData): Wallet credentials
+- **contractAddress** (string): Governance contract address
+- **proposalId** (string | number): ID of the proposal
+- **vote** (string): Vote choice (e.g., "for", "against", "abstain")
 
-## Usage
+## Example Implementation
 
-```ts
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+```tsx
+'use client'
 
-const sdk = new ChipiSDK({
-  apiKey: 'your-paymaster-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
-});
+import { useVote } from "@chipi-pay/chipi-sdk";
+import { useState, useEffect } from "react";
+import { getWalletData } from "../../app/_actions";
 
-// Example: Cast a vote
-await sdk.vote({
-  pin: '1234',
-  wallet: {
-    publicKey: '0x...',
-    encryptedPrivateKey: '...'
-  },
-  contractAddress: '0xGovernanceContract',
-  proposalId: '42',
-  vote: 'yes',
-});
+const GOVERNANCE_CONTRACT = "0xYourGovernanceContractAddress";
+
+export function VoteForm() {
+  const { voteAsync, voteData, isLoading, error } = useVote();
+  const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
+  const [form, setForm] = useState({
+    pin: '',
+    proposalId: '',
+    choice: 'for'
+  });
+
+  useEffect(() => {
+    const loadWallet = async () => {
+      const data = await getWalletData();
+      data?.publicKey && data?.privateKey && setWallet(data);
+    };
+    loadWallet();
+  }, []);
+
+  const handleVote = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wallet) return;
+
+    try {
+      await voteAsync({
+        encryptKey: form.pin,
+        wallet: {
+          publicKey: wallet.publicKey,
+          encryptedPrivateKey: wallet.privateKey
+        },
+        contractAddress: GOVERNANCE_CONTRACT,
+        proposalId: form.proposalId,
+        vote: form.choice
+      });
+    } catch (err) {
+      console.error('Voting failed:', err);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">Cast Vote</h2>
+      
+      <form onSubmit={handleVote} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Security PIN</label>
+          <input
+            type="password"
+            value={form.pin}
+            onChange={(e) => setForm({...form, pin: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Proposal ID</label>
+          <input
+            type="number"
+            value={form.proposalId}
+            onChange={(e) => setForm({...form, proposalId: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Vote Choice</label>
+          <select
+            value={form.choice}
+            onChange={(e) => setForm({...form, choice: e.target.value})}
+            className="w-full p-2 border rounded-md"
+          >
+            <option value="for">For</option>
+            <option value="against">Against</option>
+            <option value="abstain">Abstain</option>
+          </select>
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-purple-600 text-white py-2 px-4 rounded-md hover:bg-purple-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Submitting...' : 'Cast Vote'}
+        </button>
+      </form>
+
+      {voteData && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+          <p className="text-sm font-mono break-all">
+            Vote TX: {voteData}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+    </div>
+  );
+}
 ```
 
-## Return Value
+## Related Actions
 
-Returns a `Promise<string | null>`:
+- **Stake** - May be required for voting power
+- **Transfer** - For managing governance tokens
 
-- **string**: Transaction hash if the vote was recorded successfully.
-- **null**: If there was an error or the transaction failed to send.
+<Alert type="info">
+Voting power is often proportional to token holdings. Check governance rules before voting.
+</Alert>

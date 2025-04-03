@@ -3,56 +3,180 @@ title: "create-wallet"
 description: "Create an Argent-compatible wallet on StarkNet."
 ---
 
-# createWallet(pin)
+# useCreateWallet()
 
-Creates a new Argent-compatible wallet on StarkNet. This function deploys the wallet contract behind the scenes and uses Avnu’s paymaster to sponsor gas fees, resulting in a frictionless onboarding experience.
+Creates a new Argent-compatible wallet on StarkNet. This hook deploys the wallet contract behind the scenes and uses Avnu's paymaster to sponsor gas fees, resulting in a frictionless onboarding experience.
 
 ## Parameters
 
-- **pin** (string): A user-defined numeric code or password used to encrypt the wallet’s private key.
-
-## Usage
-
-```ts
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
-
-const sdk = new ChipiSDK({
-  apiKey: 'your-paymaster-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project-id',
-  argentClassHash: '0x...', // optional
-  contractAddress: '0x...',  // optional
-  contractEntryPoint: 'get_counter', // optional
-});
-
-async function createArgentWallet() {
-  try {
-    const result = await sdk.createWallet('1234');
-    console.log(result);
-    // Example response:
-    // {
-    //   success: true,
-    //   accountAddress: '0x000abc...',
-    //   encryptedPrivateKey: 'encrypted_string',
-    //   txHash: '0x12345abc...'
-    // }
-  } catch (error) {
-    // Handle any errors, e.g. SSL issues or RPC misconfigurations
-    console.error("Wallet creation error:", error);
-  }
-}
-```
+- **pin** (string): A user-defined numeric code or password used to encrypt the wallet's private key.
 
 ## Return Value
 
-If successful, returns a `Promise<{ success: boolean; accountAddress: string; encryptedPrivateKey: string; txHash: string }>` with the following fields:
+Returns an object containing:
+- **createWalletAsync**: Function to trigger wallet creation
+- **createWalletResponse**: Object with deployment results
+- **isLoading**: Boolean indicating if the operation is in progress
+- **error**: Any error that occurred during the process
 
-- **success** (boolean): Indicates whether the wallet contract deployment succeeded.
-- **accountAddress** (string): The address of the newly deployed wallet.
-- **encryptedPrivateKey** (string): The user’s private key, encrypted with the provided PIN.
-- **txHash** (string): The resulting transaction hash on StarkNet.
+## Example Implementation
 
-If an error occurs (e.g., SSL connectivity issues or an invalid RPC URL), the function throws an exception that you can catch and handle appropriately.
+```tsx
+'use client'
 
-## Example
+import { useCreateWallet } from "@chipi-pay/chipi-sdk";
+import { useState } from "react";
 
-Use the returned `encryptedPrivateKey` to store securely on your backend or persist in user metadata (e.g., via Clerk). This ensures the user can later restore or manage their wallet without re-deploying the contract.
+export function CreateWallet() {
+  const { 
+    createWalletAsync, 
+    createWalletResponse, 
+    isLoading, 
+    error 
+  } = useCreateWallet();
+  
+  const [pin, setPin] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await createWalletAsync(pin);
+      alert('Wallet created successfully!');
+    } catch (err) {
+      console.error('Wallet creation failed:', err);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h2 className="text-xl font-semibold mb-4">Create New Wallet</h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Set PIN Code
+          </label>
+          <input
+            type="password"
+            value={pin}
+            onChange={(e) => setPin(e.target.value)}
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+            required
+            minLength={4}
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Creating...' : 'Create Wallet'}
+        </button>
+      </form>
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+
+      {createWalletResponse && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-semibold">Wallet Details</h3>
+            <a
+              href={`https://starkscan.co/contract/${createWalletResponse.accountAddress}`}
+              target="_blank"
+              rel="noopener"
+              className="text-green-600 hover:text-green-800 text-sm flex items-center gap-1"
+            >
+              View Contract
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+          <div className="space-y-2">
+            <p className="text-sm">
+              <span className="font-medium">Address:</span> 
+              <span className="ml-2 font-mono break-all">
+                {createWalletResponse.accountAddress}
+              </span>
+            </p>
+            <p className="text-sm">
+              <span className="font-medium">TX Hash:</span> 
+              <span className="ml-2 font-mono break-all">
+                {createWalletResponse.txHash}
+              </span>
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Code Breakdown
+
+### 1. Form Handling
+```tsx
+const [pin, setPin] = useState('');
+```
+- Manages PIN input state
+- Validates minimum length of 4 characters
+
+### 2. Wallet Creation
+```tsx
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  try {
+    await createWalletAsync(pin);
+    // ...
+  } catch (err) { /* ... */ }
+};
+```
+- Uses `createWalletAsync` from the SDK hook
+- Handles success/error states
+
+### 3. Security Implementation
+```tsx
+<input
+  type="password"
+  // ...
+/>
+```
+- PIN input is masked
+- Never stored in plain text
+- Client-side encryption only
+
+### 4. Result Display
+```tsx
+{createWalletResponse && (
+  <div className="mt-6">
+    {/* ... */}
+    <a href={`https://starkscan.co/...`}>
+    {/* ... */}
+  </div>
+)}
+```
+- Shows wallet address and transaction hash
+- Links to StarkScan for verification
+
+## Production Notes
+
+1. **PIN Security**  
+   - Always collect PINs client-side
+   - Never log or store raw PIN values
+   - Use secure encryption before any transmission
+
+2. **Error Handling**  
+   - Catch and handle RPC connection errors
+   - Monitor paymaster API limits
+   - Implement retry logic for failed deployments
+
+3. **Wallet Storage**  
+   - Store encrypted private key securely
+   - Associate with user session (not persistent storage)
+   - Consider implementing backup/recovery flows

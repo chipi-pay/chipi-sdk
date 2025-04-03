@@ -1,48 +1,139 @@
 ---
 title: "withdraw"
-description: "Withdraw tokens from a staking contract on StarkNet."
+description: "Withdraw tokens from a staking contract."
 ---
 
-# withdraw(params)
+# useWithdraw()
 
-Withdraws tokens from a staking contract. Internally uses `executeTransaction` to call the `withdraw` entrypoint.
+Withdraws tokens from a staking contract after the lockup period. Requires prior staking.
 
 ## Parameters
 
-- **pin** (string): The same PIN used to encrypt the wallet.
-- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
-- **contractAddress** (string): The address of the staking contract.
-- **amount** (string | number): The number of tokens to withdraw.
-- **decimals** (number, optional): How many decimals the token uses. Defaults to 18.
-- **recipient** (string): The address that will receive the withdrawn tokens.
+- **encryptKey** (string): User's decryption PIN
+- **wallet** (WalletData): Wallet credentials
+- **contractAddress** (string): Staking contract address
+- **amount** (string | number): Tokens to withdraw
+- **recipient** (string): Address to receive withdrawn tokens
+- **decimals** (number): Token decimals (default: 18)
 
-## Usage
+## Example Implementation
 
-```ts
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+```tsx
+'use client'
 
-const sdk = new ChipiSDK({
-  apiKey: 'your-paymaster-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
-});
+import { useWithdraw } from "@chipi-pay/chipi-sdk";
+import { useState, useEffect } from "react";
+import { getWalletData } from "../../app/_actions";
 
-// Example: Withdraw tokens
-await sdk.withdraw({
-  pin: '1234',
-  wallet: {
-    publicKey: '0x...',
-    encryptedPrivateKey: '...'
-  },
-  contractAddress: '0xStakingContract',
-  amount: 25,
-  decimals: 18,
-  recipient: '0xYourWalletAddress',
-});
-```
+const STAKING_CONTRACT = "0xYourStakingContractAddress";
 
-## Return Value
+export function WithdrawForm() {
+  const { withdrawAsync, withdrawData, isLoading, error } = useWithdraw();
+  const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
+  const [form, setForm] = useState({
+    pin: '',
+    amount: '',
+    recipient: ''
+  });
 
-Returns a `Promise<string | null>`:
+  useEffect(() => {
+    const loadWallet = async () => {
+      const data = await getWalletData();
+      data?.publicKey && data?.privateKey && setWallet(data);
+    };
+    loadWallet();
+  }, []);
 
-- **string**: Transaction hash if the withdrawal was successful.
-- **null**: If there was an error or the transaction failed to send.
+  const handleWithdraw = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wallet) return;
+
+    try {
+      await withdrawAsync({
+        encryptKey: form.pin,
+        wallet: {
+          publicKey: wallet.publicKey,
+          encryptedPrivateKey: wallet.privateKey
+        },
+        contractAddress: STAKING_CONTRACT,
+        amount: form.amount,
+        recipient: form.recipient || wallet.publicKey,
+        decimals: 18
+      });
+    } catch (err) {
+      console.error('Withdrawal failed:', err);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">Withdraw Tokens</h2>
+      
+      <form onSubmit={handleWithdraw} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Security PIN</label>
+          <input
+            type="password"
+            value={form.pin}
+            onChange={(e) => setForm({...form, pin: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Amount</label>
+          <input
+            type="number"
+            value={form.amount}
+            onChange={(e) => setForm({...form, amount: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Recipient (optional)</label>
+          <input
+            type="text"
+            value={form.recipient}
+            onChange={(e) => setForm({...form, recipient: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            placeholder={wallet?.publicKey || 'Your wallet address'}
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-orange-600 text-white py-2 px-4 rounded-md hover:bg-orange-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Processing...' : 'Withdraw'}
+        </button>
+      </form>
+
+      {withdrawData && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+          <p className="text-sm font-mono break-all">
+            Withdrawal TX: {withdrawData}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
+## Related Actions
+
+- **Stake** - To deposit tokens first
+- **Transfer** - For moving withdrawn tokens
+
+<Alert type="warning">
+Withdrawals may have cooldown periods. Check contract terms before initiating.
+</Alert>

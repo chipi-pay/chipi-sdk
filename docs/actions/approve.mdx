@@ -1,48 +1,128 @@
 ---
 title: "approve"
-description: "Allow a spender to manage tokens on StarkNet."
+description: "Authorize contracts to manage your tokens."
 ---
 
-# approve(params)
+# useApprove()
 
-Approves a specific spender address to manage tokens from the user’s wallet. Internally uses `executeTransaction` for transaction submission.
+Grants permission to a smart contract to spend tokens from the user's wallet. Required before staking or other delegated actions.
 
 ## Parameters
 
-- **pin** (string): The same PIN used to encrypt the wallet.
-- **wallet** (WalletData): An object containing the wallet's `publicKey` and `encryptedPrivateKey`.
-- **contractAddress** (string): The token contract address on StarkNet.
-- **spender** (string): The address authorized to spend the user's tokens.
-- **amount** (string | number): The token amount to approve.
-- **decimals** (number, optional): How many decimals the token uses. Defaults to 18.
+- **encryptKey** (string): User's decryption PIN
+- **wallet** (WalletData): Wallet public/private key pair
+- **contractAddress** (string): Token contract to approve
+- **spender** (string): Contract address to authorize
+- **amount** (string | number): Maximum spend allowance
+- **decimals** (number): Token decimals (default: 18)
 
-## Usage
+## Example Implementation
 
-``` ts
-import { ChipiSDK } from '@chipi-pay/chipi-sdk';
+```tsx
+'use client'
 
-const sdk = new ChipiSDK({
-  apiKey: 'your-paymaster-api-key',
-  rpcUrl: 'https://starknet-goerli.infura.io/v3/your-infura-project',
-});
+import { useApprove } from "@chipi-pay/chipi-sdk";
+import { useState, useEffect } from "react";
+import { getWalletData } from "../../app/_actions";
 
-// Example: Approve tokens
-await sdk.approve({
-  pin: '1234',
-  wallet: {
-    publicKey: '0x...',
-    encryptedPrivateKey: '...'
-  },
-  contractAddress: '0xYourTokenContract',
-  spender: '0xSpenderAddress',
-  amount: 100,
-  decimals: 18,
-});
+const VESU_CONTRACT = "0x037ae3f583c8d644b7556c93a04b83b52fa96159b2b0cbd83c14d3122aef80a2";
+
+export function ApproveForm() {
+  const { approveAsync, approveData, isLoading, error } = useApprove();
+  const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
+  const [form, setForm] = useState({
+    pin: '',
+    amount: ''
+  });
+
+  useEffect(() => {
+    const loadWallet = async () => {
+      const data = await getWalletData();
+      data?.publicKey && data?.privateKey && setWallet(data);
+    };
+    loadWallet();
+  }, []);
+
+  const handleApprove = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!wallet) return;
+
+    try {
+      await approveAsync({
+        encryptKey: form.pin,
+        wallet: {
+          publicKey: wallet.publicKey,
+          encryptedPrivateKey: wallet.privateKey
+        },
+        contractAddress: VESU_CONTRACT,
+        spender: VESU_CONTRACT, // Authorizing VESU contract
+        amount: form.amount,
+        decimals: 18
+      });
+    } catch (err) {
+      console.error('Approval failed:', err);
+    }
+  };
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h2 className="text-2xl font-bold mb-4">Approve Token Access</h2>
+      
+      <form onSubmit={handleApprove} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Security PIN</label>
+          <input
+            type="password"
+            value={form.pin}
+            onChange={(e) => setForm({...form, pin: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Amount to Approve</label>
+          <input
+            type="number"
+            value={form.amount}
+            onChange={(e) => setForm({...form, amount: e.target.value})}
+            className="w-full p-2 border rounded-md"
+            required
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isLoading}
+          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+        >
+          {isLoading ? 'Approving...' : 'Authorize Contract'}
+        </button>
+      </form>
+
+      {approveData && (
+        <div className="mt-4 p-3 bg-gray-50 rounded-md">
+          <p className="text-sm font-mono break-all">
+            Approval TX: {approveData}
+          </p>
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-4 p-3 bg-red-50 text-red-700 rounded-md">
+          Error: {error.message}
+        </div>
+      )}
+    </div>
+  );
+}
 ```
 
-## Return Value
+## Related Actions
 
-Returns a `Promise<string | null>`:
+- **Stake** - Requires prior approval
+- **Transfer** - For moving tokens after approval
 
-- **string**: Transaction hash if the approval succeeded.
-- **null**: If there was an error or the transaction failed to send.
+<Alert type="info">
+Approvals are specific to each token-contract pair. You'll need to re-approve when interacting with new contracts.
+</Alert>
