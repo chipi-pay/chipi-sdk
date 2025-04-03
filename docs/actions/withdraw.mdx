@@ -22,42 +22,37 @@ Withdraws tokens from a staking contract after the lockup period. Requires prior
 'use client'
 
 import { useWithdraw } from "@chipi-pay/chipi-sdk";
-import { useState, useEffect } from "react";
-import { getWalletData } from "../../app/_actions";
+import { useState } from "react";
 
 const STAKING_CONTRACT = "0xYourStakingContractAddress";
 
+// Sample wallet data - replace with your wallet in production
+const sampleWallet = {
+  publicKey: "0x123...yourPublicKeyHere",
+  privateKey: "encrypted:key:data" // This would be encrypted data in production
+};
+
 export function WithdrawForm() {
   const { withdrawAsync, withdrawData, isLoading, error } = useWithdraw();
-  const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
   const [form, setForm] = useState({
     pin: '',
     amount: '',
     recipient: ''
   });
 
-  useEffect(() => {
-    const loadWallet = async () => {
-      const data = await getWalletData();
-      data?.publicKey && data?.privateKey && setWallet(data);
-    };
-    loadWallet();
-  }, []);
-
   const handleWithdraw = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wallet) return;
 
     try {
       await withdrawAsync({
         encryptKey: form.pin,
         wallet: {
-          publicKey: wallet.publicKey,
-          encryptedPrivateKey: wallet.privateKey
+          publicKey: sampleWallet.publicKey,
+          encryptedPrivateKey: sampleWallet.privateKey
         },
         contractAddress: STAKING_CONTRACT,
         amount: form.amount,
-        recipient: form.recipient || wallet.publicKey,
+        recipient: form.recipient || sampleWallet.publicKey,
         decimals: 18
       });
     } catch (err) {
@@ -99,7 +94,7 @@ export function WithdrawForm() {
             value={form.recipient}
             onChange={(e) => setForm({...form, recipient: e.target.value})}
             className="w-full p-2 border rounded-md"
-            placeholder={wallet?.publicKey || 'Your wallet address'}
+            placeholder={sampleWallet.publicKey || 'Your wallet address'}
           />
         </div>
 
