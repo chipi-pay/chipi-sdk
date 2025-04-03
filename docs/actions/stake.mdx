@@ -68,9 +68,9 @@ export function StakeForm() {
     <div className="bg-white rounded-xl shadow-lg p-6">
       <h2 className="text-2xl font-bold mb-4">Stake Tokens</h2>
       
-      <Alert type="warning" className="mb-4">
-        You must first <a href="/actions/approve" className="text-blue-600 hover:underline">approve the staking contract</a> before depositing.
-      </Alert>
+      <div className="mb-4 p-3 bg-yellow-50 text-yellow-700 rounded-md">
+        You must first <a href="/actions/approve.mdx" className="text-blue-600 hover:underline">approve the staking contract</a> before depositing.
+      </div>
 
       <form onSubmit={handleStake} className="space-y-4">
         <div>
@@ -120,13 +120,12 @@ export function StakeForm() {
     </div>
   );
 }
-```
+
+:::info
+Staked tokens are locked until the contract's withdrawal period. Check the staking contract's terms.
+:::
 
 ## Related Actions
 
 - **Approve** - Required before first stake
 - **Withdraw** - To retrieve staked tokens
-
-<Alert type="info">
-Staked tokens are locked until the contract's withdrawal period. Check the staking contract's terms.
-</Alert>
