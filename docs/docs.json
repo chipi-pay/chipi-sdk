@@ -28,6 +28,7 @@
               "actions/stake",
               "actions/withdraw",
               "actions/transfer",
+              "actions/vote",
               "actions/call-any-contract"            
             ]
           },

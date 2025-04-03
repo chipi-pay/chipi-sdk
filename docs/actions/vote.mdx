@@ -1,33 +1,33 @@
 ---
 title: "vote"
-description: "Participate in governance decisions."
+description: "Participate in governance decisions using callAnyContract."
 ---
 
-# useVote()
+# useCallAnyContract()
 
-Casts a vote in a DAO or governance contract. Requires voting rights in the specified contract.
+Casts a vote in a DAO or governance contract using the generic contract interaction hook. Requires voting rights in the specified contract.
 
 ## Parameters
 
 - **encryptKey** (string): User's decryption PIN
 - **wallet** (WalletData): Wallet credentials
 - **contractAddress** (string): Governance contract address
-- **proposalId** (string | number): ID of the proposal
-- **vote** (string): Vote choice (e.g., "for", "against", "abstain")
+- **entrypoint** (string): "vote" (contract method name)
+- **calldata** (any[]): [proposalId, voteChoice]
 
 ## Example Implementation
 
 ```tsx
 'use client'
 
-import { useVote } from "@chipi-pay/chipi-sdk";
+import { useCallAnyContract } from "@chipi-pay/chipi-sdk";
 import { useState, useEffect } from "react";
 import { getWalletData } from "../../app/_actions";
 
 const GOVERNANCE_CONTRACT = "0xYourGovernanceContractAddress";
 
 export function VoteForm() {
-  const { voteAsync, voteData, isLoading, error } = useVote();
+  const { callAsync, callData, isLoading, error } = useCallAnyContract();
   const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
   const [form, setForm] = useState({
     pin: '',
@@ -48,15 +48,15 @@ export function VoteForm() {
     if (!wallet) return;
 
     try {
-      await voteAsync({
+      await callAsync({
         encryptKey: form.pin,
         wallet: {
           publicKey: wallet.publicKey,
           encryptedPrivateKey: wallet.privateKey
         },
         contractAddress: GOVERNANCE_CONTRACT,
-        proposalId: form.proposalId,
-        vote: form.choice
+        entrypoint: "vote",
+        calldata: [form.proposalId, form.choice]
       });
     } catch (err) {
       console.error('Voting failed:', err);
@@ -112,10 +112,10 @@ export function VoteForm() {
         </button>
       </form>
 
-      {voteData && (
+      {callData && (
         <div className="mt-4 p-3 bg-gray-50 rounded-md">
           <p className="text-sm font-mono break-all">
-            Vote TX: {voteData}
+            Vote TX: {callData}
           </p>
         </div>
       )}
@@ -133,7 +133,7 @@ export function VoteForm() {
 ## Related Actions
 
 - **[Stake](/actions/stake.mdx)** - Earn voting power by staking tokens
-- **[Transfer](/actions/transfer.mdx)** - Manage token holdings
+- **[Call Any Contract](/actions/call-any-contract.mdx)** - For other contract interactions
 
 :::info
 Voting power is calculated based on your token balance at the snapshot block.
