@@ -22,37 +22,33 @@ Grants permission to a smart contract to spend tokens from the user's wallet. Re
 'use client'
 
 import { useApprove } from "@chipi-pay/chipi-sdk";
-import { useState, useEffect } from "react";
-import { getWalletData } from "../../app/_actions";
+import { useState } from "react";
 
 const VESU_CONTRACT = "0x037ae3f583c8d644b7556c93a04b83b52fa96159b2b0cbd83c14d3122aef80a2";
 
+// Sample wallet data - replace with your wallet in production
+const sampleWallet: { publicKey: string; encryptedPrivateKey: string } = {
+  publicKey: "0x123...yourPublicKeyHere",
+  encryptedPrivateKey: "encrypted:key:data" // This would be encrypted data in production
+};
+
 export function ApproveForm() {
   const { approveAsync, approveData, isLoading, error } = useApprove();
-  const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
+  const [wallet] = useState(sampleWallet);
   const [form, setForm] = useState({
     pin: '',
     amount: ''
   });
 
-  useEffect(() => {
-    const loadWallet = async () => {
-      const data = await getWalletData();
-      data?.publicKey && data?.privateKey && setWallet(data);
-    };
-    loadWallet();
-  }, []);
-
   const handleApprove = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wallet) return;
 
     try {
       await approveAsync({
         encryptKey: form.pin,
         wallet: {
           publicKey: wallet.publicKey,
-          encryptedPrivateKey: wallet.privateKey
+          encryptedPrivateKey: wallet.encryptedPrivateKey
         },
         contractAddress: VESU_CONTRACT,
         spender: VESU_CONTRACT, // Authorizing VESU contract

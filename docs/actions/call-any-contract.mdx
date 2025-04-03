@@ -21,12 +21,17 @@ Executes any StarkNet contract method. Handles all contract interactions not cov
 'use client'
 
 import { useCallAnyContract } from "@chipi-pay/chipi-sdk";
-import { useState, useEffect } from "react";
-import { getWalletData } from "../../app/_actions";
+import { useState } from "react";
+
+// Sample wallet data - replace with your wallet in production
+const sampleWallet: { publicKey: string; encryptedPrivateKey: string } = {
+  publicKey: "0x123...yourPublicKeyHere",
+  encryptedPrivateKey: "encrypted:key:data" // This would be encrypted data in production
+};
 
 export function GenericContractForm() {
   const { callAsync, callData, isLoading, error } = useCallAnyContract();
-  const [wallet, setWallet] = useState<{ publicKey: string, privateKey: string } | null>(null);
+  const [wallet] = useState(sampleWallet);
   const [form, setForm] = useState({
     pin: '',
     contractAddress: '',
@@ -34,24 +39,15 @@ export function GenericContractForm() {
     calldata: ''
   });
 
-  useEffect(() => {
-    const loadWallet = async () => {
-      const data = await getWalletData();
-      data?.publicKey && data?.privateKey && setWallet(data);
-    };
-    loadWallet();
-  }, []);
-
   const handleCall = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!wallet) return;
 
     try {
       await callAsync({
         encryptKey: form.pin,
         wallet: {
           publicKey: wallet.publicKey,
-          encryptedPrivateKey: wallet.privateKey
+          encryptedPrivateKey: wallet.encryptedPrivateKey
         },
         contractAddress: form.contractAddress,
         entrypoint: form.entrypoint,
