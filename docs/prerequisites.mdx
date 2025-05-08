@@ -16,6 +16,26 @@ yarn add @chipi-pay/chipi-sdk
 
 </CodeGroup>
 
+## Create your Organization in our Dashboard to get your keys
+
+<CardGroup cols={6}>
+  <Card
+    title="Go to Dashboard"
+    icon="rocket"
+    href="https://backend-dashboard-chipi.vercel.app/"
+  >
+    Get your keys and some statistics from your app.
+  </Card>
+</CardGroup>
+
+### Get your API Keys
+
+Once you have registered and logged into the dashboard, go to the **Configure** tab. There you will find your **App ID**, **Public Key**, and **Secret Key**.
+
+  ![Example of API keys in the dashboard](./images/api-keys-example.png)
+
+> **Note:** Keep your Secret Key safe and never share it or expose it in your frontend code.
+
 ## Setup the Provider
 
 The first step is to wrap your application with the `ChipiProvider` component. This provider initializes the SDK and makes all the hooks available throughout your application.
@@ -28,21 +48,21 @@ Create a providers file (e.g., `app/providers.tsx` for Next.js):
 // Initialize SDK
 import { ChipiProvider } from "@chipi-pay/chipi-sdk";
 
-const AVNU_API_KEY = process.env.NEXT_PUBLIC_AVNU_API_KEY!;
-const INFURA_API_KEY = process.env.NEXT_PUBLIC_INFURA_API_KEY!;
+const CHIPI_PUBLIC_KEY = process.env.NEXT_PUBLIC_CHIPI_PUBLIC_KEY!;
+const CHIPI_APP_ID = process.env.NEXT_PUBLIC_CHIPI_APP_ID!;
+const CHIPI_SECRET_KEY = process.env.CHIPI_SECRET_KEY!;
 
-if (!AVNU_API_KEY || !INFURA_API_KEY) {
-  throw new Error("AVNU_API_KEY or INFURA_API_KEY is not set");
+if (!CHIPI_PUBLIC_KEY || !CHIPI_APP_ID || !CHIPI_SECRET_KEY) {
+  throw new Error("Some Key is not set");
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <ChipiProvider
       config={{
-        apiKey: AVNU_API_KEY,
-        rpcUrl:
-          `https://starknet-mainnet.infura.io/v3/${INFURA_API_KEY}`,
-        network: "mainnet",
+        apiKey: "CHIPI_PUBLIC_KEY",
+        secretKey: "CHIPI_SECRET_KEY",
+        appId: "CHIPI_APP_ID"
       }}
     >
       {children}
@@ -75,20 +95,14 @@ export default function RootLayout({
 ```
 
 This setup:
-1. Initializes the SDK with your Avnu Paymaster API key
-2. Connects to StarkNet via your Infura endpoint
+1. Initializes the SDK with our Avnu Paymaster Provider
+2. Connects to StarkNet Mainnet via our RPC endpoint
 3. Makes all Chipi SDK hooks available throughout your application
 4. Sets up the wallet management infrastructure
 
 ## Additional Steps
 
-1. **Prepare Your RPC**  
-   We suggest using [Infura for StarkNet](https://www.infura.io/networks/ethereum/starknet). Sign up or log in to get your unique project ID and endpoint URL.
-
-2. **Request Avnu's Paymaster API Key**  
-   Join their [Telegram channel](https://t.me/avnu_fi) to request an API key, which you'll use to enable fee coverage for your transactions.
-
-3. **Obtain Your OAuth Provider API Keys**  
+1. **Obtain Your OAuth Provider API Keys**  
    We recommend [Clerk](https://clerk.com/) or a similar service to streamline social login with providers like Google, X, or Meta. Once configured, you can pass user tokens to the Chipi SDK for invisible wallet creation.
 
 
