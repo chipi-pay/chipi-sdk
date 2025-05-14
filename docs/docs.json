@@ -35,7 +35,8 @@
           {
             "group": "Guides",
             "pages": [
-              "guides/nextjs-clerk-auth"
+              "guides/nextjs-clerk-auth",
+              "guides/api-overview"
             ]
           }
         ]

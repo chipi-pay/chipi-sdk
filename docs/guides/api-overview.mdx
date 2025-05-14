@@ -1,0 +1,105 @@
+---
+title: 'API Overview'
+description: 'Complete guide to the ChipiPay API'
+---
+
+# API Overview
+
+## Introduction
+
+The ChipiPay API provides an interface to interact with the decentralized payment platform. This API enables wallet creation and management, as well as transaction processing on the Starknet network.
+
+## Authentication
+
+To use the API, you need to provide the following credentials in your request headers:
+
+- `Authorization`: Bearer token (example: `Bearer sk_dev_testValue`)
+- `X-API-Key`: Your public API key (example: `pk_dev_737....4db`)
+
+## Main Endpoints
+
+### Prepare Wallet
+
+```bash
+POST /chipi-wallets/prepare-creation
+```
+
+This endpoint initiates the wallet creation process. It requires:
+
+- `appId`: Your organization ID
+- `publicKey`: Starknet public key for the wallet
+
+Usage example:
+```bash
+curl --request POST \
+  --url https://chipi-back-production.up.railway.app/chipi-wallets/prepare-creation \
+  --header 'Authorization: Bearer sk_dev_testValue' \
+  --header 'Content-Type: application/json' \
+  --header 'X-API-Key: pk_dev_737....4db' \
+  --data '{
+    "appId": "org_your_org_id",
+    "publicKey": "0x_starknet_public_key_for_wallet"
+  }'
+```
+
+### Create Wallet
+
+```bash
+POST /chipi-wallets
+```
+
+This endpoint completes the wallet creation. It requires:
+
+- `publicKey`: Wallet public key
+- `userSignature`: User signature
+- `encryptePrivateKey`: Encrypted private key
+- `typeData`: Typed data for the transaction
+- `deploymentData`: Contract deployment data
+
+Usage example:
+```bash
+curl --request POST \
+  --url https://chipi-back-production.up.railway.app/chipi-wallets \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "publicKey": "0x_starknet_public_key_wallet",
+    "userSignature": {
+      "r": "256104....",
+      "s": "1734....",
+      "recovery": 1
+    },
+    "encryptePrivateKey": "U2FsdGVkX19QZvX8Y7+2X9q4YzZy+ZJY+1X5fq4X7vZ3q4X7vZ3q4X7v=",
+    "typeData": {
+      // ... typed data ...
+    },
+    "deploymentData": {
+      "class_hash": "0x036078334509b514626504edc9fb252328d1a240e4e948bef8d0c08dff45927f",
+      "salt": "0x334360f56bf7441822f8ec7a59c260a6de7359ca333bdc9cb08f1aac9ceed9c",
+      "unique": "0x0",
+      "calldata": [
+        "0x334360f56bf7441822f8ec7a59c260a6de7359ca333bdc9cb08f1aac9ceed9c",
+        "0x0",
+        "0x0"
+      ]
+    }
+  }'
+```
+
+## Data Types
+
+The API uses several Starknet-specific data types:
+
+- `StarknetDomain`: Defines the domain for signatures
+- `OutsideExecution`: Structure for external executions
+- `Call`: Structure for contract calls
+
+## Security Considerations
+
+- Keep your API keys secure and never share them
+- Always use HTTPS for communications
+- Implement best security practices when handling private keys
+- Always verify transaction signatures
+
+## Additional Documentation
+
+For a more detailed documentation of all available endpoints, please refer to our [Swagger documentation](https://chipi-back-production.up.railway.app/api#/). 
