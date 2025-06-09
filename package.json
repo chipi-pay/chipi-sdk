@@ -43,7 +43,8 @@
     "@avnu/gasless-sdk": "^0.1.6",
     "@clerk/express": "^1.5.0",
     "crypto-js": "^4.2.0",
-    "starknet": ">=6.23.1"
+    "starknet": ">=6.23.1",
+    "viem": "^2.30.6"
   },
   "repository": {
     "type": "git",
