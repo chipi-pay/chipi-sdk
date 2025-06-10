@@ -1,15 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { useChipiContext } from "../context";
-import { WithdrawParams } from "../../core";
+import { WithdrawVesuUsdcParams } from "../../core";
 
 
 
 
-export function useWithdraw() {
+export function useWithdrawVesuUsdc() {
   const { chipiSDK } = useChipiContext();
 
-  const mutation = useMutation<string, Error, Omit<WithdrawParams, 'apiPublicKey'>>({
-    mutationFn: chipiSDK.withdraw,
+  const mutation = useMutation<string, Error, Omit<WithdrawVesuUsdcParams, 'apiPublicKey'>>({
+    mutationFn: chipiSDK.withdrawVesuUsdc,
   });
 
   return {

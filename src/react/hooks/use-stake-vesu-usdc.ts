@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useChipiContext } from "../context";
-import { StakeParams } from "../../core";
+import { StakeVesuUsdcParams } from "../../core";
 
 
 
@@ -8,7 +8,7 @@ import { StakeParams } from "../../core";
 export function useStakeVesuUsdc() {
   const { chipiSDK } = useChipiContext();
 
-  const mutation = useMutation<string, Error, Omit<StakeParams, 'apiPublicKey'>>({
+  const mutation = useMutation<string, Error, Omit<StakeVesuUsdcParams, 'apiPublicKey'>>({
     mutationFn: chipiSDK.stakeVesuUsdc,
   });
 
