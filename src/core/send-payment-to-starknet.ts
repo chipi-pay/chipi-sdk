@@ -1,23 +1,8 @@
-import { CrosschainNetworks, SendCrossChainParamsTyped, SendCrossChainWithAuthParams } from "./types";
+import { CrosschainNetworks, CrosschainPaymentParams } from "./types";
 import { decryptPrivateKey } from "./lib/encryption";
 import { BACKEND_URL } from "./backend-url";
 import { Account, Call, RpcProvider } from "starknet";
  
-export interface CrosschainPaymentParams {
-  apiPublicKey: string;
-  bearerToken: string;
-  encryptKey: string;
-  wallet: {
-    publicKey: string;
-    encryptedPrivateKey: string;
-  };
-  destinationAddress: string;
-  destinationAsset: string;
-  amount: string;
-  sourceChain: CrosschainNetworks;
-  sourceAsset: string;
-}
-
 
 export const sendPaymentStarknetToArbitrum = async (
   params: CrosschainPaymentParams
@@ -137,6 +122,7 @@ export const sendPaymentStarknetToArbitrum = async (
       }
     
       const transactionResult = await executeTransaction.json();
+      console.log("transactionResult Starknet to Arbitrum ", transactionResult);
       return transactionResult.transactionHash;
 
   } catch (error) {

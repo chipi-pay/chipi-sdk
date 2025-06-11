@@ -5,4 +5,4 @@ export { useApprove } from './use-approve';
 export { useStakeVesuUsdc } from './use-stake-vesu-usdc';
 export { useWithdraw } from './use-withdraw';
 export { useCallAnyContract } from './use-call-any-contract';
-
+export { usePaymentToArbitrum } from './use-payment-to-arbitrum';

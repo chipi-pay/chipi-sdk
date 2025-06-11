@@ -14,7 +14,8 @@ import type {
   WithdrawParams,
 } from "./types";
 import { createArgentWallet } from "./create-argent-wallet";
-import { CreateWalletResponse } from "./types";
+import { sendPaymentStarknetToArbitrum } from "./send-payment-to-starknet";
+import { CreateWalletResponse, CrosschainPaymentParams, CrosschainAssets, CrosschainNetworks } from "./types";
 
 export class ChipiSDK {
   private apiPublicKey: string;
@@ -31,6 +32,7 @@ export class ChipiSDK {
     this.withdraw = this.withdraw.bind(this);
     this.callAnyContract = this.callAnyContract.bind(this);
     this.createWallet = this.createWallet.bind(this);
+    this.paymentToArbitrum = this.paymentToArbitrum.bind(this);
   }
 
   private formatAmount(amount: string | number, decimals: number = 18): string {
@@ -169,6 +171,21 @@ export class ChipiSDK {
       apiPublicKey: this.apiPublicKey,
       bearerToken,
       nodeUrl: this.nodeUrl,
+    });
+  }
+
+  async paymentToArbitrum(params: Omit<CrosschainPaymentParams, 'apiPublicKey'>): Promise<string> {
+    const { encryptKey, wallet, bearerToken, destinationAddress, amount } = params;
+    return sendPaymentStarknetToArbitrum({
+      encryptKey,
+      wallet,
+      bearerToken,
+      apiPublicKey: this.apiPublicKey,
+      destinationAddress,
+      destinationAsset: CrosschainAssets.aUSDC,
+      amount: this.formatAmount(amount, 6),
+      sourceChain: CrosschainNetworks[CrosschainNetworks.STARKNET_MAINNET],
+      sourceAsset: CrosschainAssets.sUSDC,
     });
   }
 }

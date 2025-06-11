@@ -125,7 +125,7 @@ export enum BaseAssets {
 
 export enum CrosschainAssets {
   sETH = StarknetAssets.ETH,
-  sUDC = StarknetAssets.USDC,
+  sUSDC = StarknetAssets.USDC,
   aUSDC = ArbitrumAssets.USDC,
   bUSDC = BaseAssets.USDC,
   bETH = BaseAssets.ETH
@@ -239,4 +239,19 @@ export interface SendCrossChainWithAuthParams {
   amount: string | number;
   sourceChain?: CrosschainNetworks;
   sourceAsset?: StarknetAssets | ArbitrumAssets | BaseAssets;
+}
+
+export interface CrosschainPaymentParams {
+  apiPublicKey: string;
+  bearerToken: string;
+  encryptKey: string;
+  wallet: {
+    publicKey: string;
+    encryptedPrivateKey: string;
+  };
+  destinationAddress: string;
+  destinationAsset: string;
+  amount: string;
+  sourceChain: string;
+  sourceAsset: string;
 }
