@@ -130,8 +130,8 @@ export class ChipiSDK {
   }
 
   async withdrawVesuUsdc(params: Omit<WithdrawVesuUsdcParams, 'apiPublicKey'>): Promise<string> {
-    const { encryptKey, wallet, contractAddress, amount, recipient, decimals, bearerToken } = params;
-    const formattedAmount = this.formatAmount(amount, decimals);
+    const { encryptKey, wallet, amount, recipient, bearerToken } = params;
+    const formattedAmount = this.formatAmount(amount, 6);
     
     return this.executeTransaction({
       encryptKey,

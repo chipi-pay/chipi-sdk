@@ -40,9 +40,7 @@ export interface WithdrawVesuUsdcParams {
   encryptKey: string;
   wallet: WalletData;
   recipient: string;
-  contractAddress: string;
   amount: string | number;
-  decimals?: number;
   bearerToken: string;
 }
 
