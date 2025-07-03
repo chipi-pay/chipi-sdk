@@ -6,11 +6,11 @@ Chipi SDK is the easiest way to integrate USDC staking and withdrawal functional
 
 - React 18 or later
 - Node.js >=18.17.0 or later
-- A Chipi account. [Create your account for free](https://dashboard.chipi.com)
+- A Chipi account. [Create your account for free](https://dashboard.chipipay.com)
 
 ## Installation
 
-The fastest way to get started with Chipi SDK is by following our [Quickstart Guide](https://docs.chipi.com/quickstart).
+The fastest way to get started with Chipi SDK is by following our [Quickstart Guide](https://docs.chipipay.com/gasless/quickstart).
 
 ```bash
 npm install @chipi-pay/chipi-sdk
@@ -20,7 +20,7 @@ yarn add @chipi-pay/chipi-sdk
 
 ## Usage
 
-For detailed information, guides, and examples visit our [documentation](https://docs.chipi.com).
+For detailed information, guides, and examples visit our [documentation](https://docs.chipipay.com).
 
 ## Support
 
@@ -40,4 +40,4 @@ We're open to all community contributions! If you'd like to contribute in any wa
 
 @chipi-pay/chipi-sdk is provided "as is" without any warranty. Use at your own risk.
 
-For more information and to report security issues, please refer to our [security documentation](https://docs.chipi.com/security).
+For more information and to report security issues, please refer to our [security documentation](https://docs.chipipay.com).
