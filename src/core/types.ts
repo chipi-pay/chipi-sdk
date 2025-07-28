@@ -63,7 +63,7 @@ export interface ExecuteTransactionParams {
 export interface CreateWalletParams {
   encryptKey: string;
   apiPublicKey: string;
-  bearerToken: string;
+  bearerToken?: string; // ⚠️ Opcional para testing
   nodeUrl: string;
 }
 
@@ -99,4 +99,50 @@ export interface TransactionResult {
   accountAddress: string;
   encryptedPrivateKey: string;
   txHash: string;
+}
+
+export interface SessionPolicy {
+  contractAddress: string;
+  selector: string;
+  maxAmount?: string;
+  expiresAt?: number;
+}
+
+export interface SessionKeyResponse {
+  sessionKey: string;
+  sessionPrivateKey: string; // ✅ Necesario para firmar transacciones
+  transactionHash: string;
+  policies: SessionPolicy[];
+  expiresAt: number;
+}
+
+export interface SessionKeyData {
+  sessionPublicKey: string;
+  sessionPrivateKey: string;
+  mainWalletAddress: string;
+  policies: SessionPolicy[];
+  expiresAt: number;
+  isActive: boolean;
+}
+
+export interface CreateSessionKeyParams {
+  mainWallet: WalletData;
+  encryptKey: string;
+  apiPublicKey: string;
+  bearerToken: string;
+  nodeUrl: string;
+  policiesData: SessionPolicy[];
+  sessionDuration?: number;
+}
+
+export interface ExecuteWithSessionKeyParams {
+  sessionWallet: WalletData;
+  calls: Call[];
+  apiPublicKey: string;
+  bearerToken: string;
+  nodeUrl: string;
+}
+
+export interface ExecuteWithSessionKeyResponse {
+  transactionHash: string;
 }

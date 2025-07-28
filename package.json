@@ -24,7 +24,8 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:session-keys": "npm run build && node test-session-keys.js"
   },
   "peerDependencies": {
     "@tanstack/react-query": ">=4.0.0",

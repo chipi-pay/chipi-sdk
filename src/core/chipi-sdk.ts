@@ -11,9 +11,15 @@ import type {
   StakeVesuUsdcParams,
   TransferParams,
   WithdrawVesuUsdcParams,
+  ExecuteWithSessionKeyParams,
+  ExecuteWithSessionKeyResponse,
+  WalletData,
+  SessionPolicy,
 } from "./types";
 import { createArgentWallet } from "./create-argent-wallet";
-import { CreateWalletResponse } from "./types";
+import { createSessionKey } from "./create-session-keys-accounts";
+import { executeWithSessionKey } from "./execute-with-session-keys";
+import { CreateWalletResponse, SessionKeyResponse } from "./types";
 
 export class ChipiSDK {
   private apiPublicKey: string;
@@ -30,6 +36,8 @@ export class ChipiSDK {
     this.withdrawVesuUsdc = this.withdrawVesuUsdc.bind(this);
     this.callAnyContract = this.callAnyContract.bind(this);
     this.createWallet = this.createWallet.bind(this);
+    this.createSessionKey = this.createSessionKey.bind(this);
+    this.executeWithSessionKey = this.executeWithSessionKey.bind(this);
   }
 
   private formatAmount(amount: string | number, decimals: number = 18): string {
@@ -169,6 +177,45 @@ export class ChipiSDK {
       bearerToken,
       nodeUrl: this.nodeUrl,
     });
+  }
+
+  async createSessionKey(params: {
+    mainWallet: WalletData;
+    encryptKey: string;
+    bearerToken?: string; // ⚠️ Opcional para testing
+    policiesData?: SessionPolicy[];
+    sessionDuration?: number;
+  }): Promise<SessionKeyResponse> {
+    const { mainWallet, encryptKey, bearerToken, policiesData = [], sessionDuration } = params;
+    return createSessionKey({
+      mainWallet,
+      encryptKey,
+      apiPublicKey: this.apiPublicKey,
+      bearerToken: bearerToken || "", // Para testing
+      nodeUrl: this.nodeUrl,
+    }, policiesData, sessionDuration);
+  }
+
+  async executeWithSessionKey(params: {
+    sessionKeyData: {
+      sessionPrivateKey: string;
+      sessionPublicKey: string;
+      mainWalletAddress: string;
+      policies: any[];
+      expiresAt: number;
+    };
+    calls: Call[];
+    bearerToken?: string; // ⚠️ Opcional para testing
+  }): Promise<ExecuteWithSessionKeyResponse> {
+    const { sessionKeyData, calls, bearerToken } = params;
+    const transactionHash = await executeWithSessionKey(
+      sessionKeyData,
+      calls,
+      this.apiPublicKey,
+      bearerToken, // Puede ser undefined
+      this.nodeUrl
+    );
+    return { transactionHash };
   }
 }
 
